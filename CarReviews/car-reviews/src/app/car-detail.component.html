@@ -1,1 +1,56 @@
-Hello Detail
+
+<br/>
+<md-grid-list cols="2" rowHeight="1:1">
+    <md-grid-tile>
+            <md-card class="example-card">
+                    <md-card-header>
+                      <div md-card-avatar class="example-header-image"></div>
+                      <md-card-title>Car Name</md-card-title>
+                      <md-card-subtitle>Input a company</md-card-subtitle>
+                    </md-card-header>
+                    <img md-card-image src="assets/noimage.jpg" alt="Photo of a Shiba Inu">
+                    <md-card-content>
+                      <p>
+                        This is the description are a of your car. You can explan why your car is fantastic.
+                      </p>
+                    </md-card-content>
+                    <md-card-actions>
+                      <button md-button>LIKE</button>
+                      <button md-button>SHARE</button>
+                      <button md-button>Edit</button>
+                    </md-card-actions>
+                  </md-card>
+    </md-grid-tile>
+    <md-grid-tile>
+        <md-card>
+                <form class="example-form">
+                        <md-form-field class="example-full-width">
+                                <input mdInput placeholder="Name">
+                        </md-form-field>
+                      
+                        <p>
+                        <md-form-field class="example-full-width">
+                                <input mdInput placeholder="Company">
+                          </md-form-field>
+                        </p>
+                        <p>
+                          <md-form-field class="example-full-width">
+                                <textarea mdInput placeholder="Description"></textarea>
+                          </md-form-field>
+                        </p>
+                        
+                        <p>
+                                <input hidden="true" id="input-file-id" type="file" accept="image/*" (change)="upload(fl.files)"/>
+                                <label for="input-file-id" class="mat-raised-button mat-basic">Choose image</label>
+                
+                        </p>
+
+                        <p>
+                            <button md-fab color="accent"><md-icon class="example-icon">file_upload</md-icon></button>
+                        </p>
+
+                      </form>
+
+        </md-card>
+    </md-grid-tile>
+</md-grid-list>
