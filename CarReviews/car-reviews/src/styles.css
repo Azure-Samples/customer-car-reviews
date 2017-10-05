@@ -1,0 +1,58 @@
+@import '~https://fonts.googleapis.com/icon?family=Material+Icons';
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+body {
+    margin: 0;
+    font-family: Roboto, sans-serif;
+  }
+
+  md-card {
+    max-width: 80%;
+    margin: 2em auto;
+    text-align: center;
+  }
+
+  md-toolbar-row {
+    justify-content: space-between;
+  }
+
+  .done {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: white;
+  }
+
+  .example-card {
+    width: 400px;
+  }
+
+  .example-header-image {
+    background-image: url('assets/subaru.png');
+    background-size: cover;
+  }
+  .example-header-image-nissan {
+    background-image: url('assets/nissan.png');
+    background-size: cover;
+  }
+
+  .example-button-row {
+    display: flex;
+    align-items: right;
+    justify-content: space-around;
+  }
+
+  .example-icon {
+    padding: 0 14px;
+  }
+  
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 20px;
+  }
