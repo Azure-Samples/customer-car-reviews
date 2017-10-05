@@ -8,16 +8,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 
+import { AppRoutingModule } from './app-routing.module';
+import { CarDetailComponent } from './car-detail.component';
+import { DashboardComponent } from './dashboard.component';
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CarDetailComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     MaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

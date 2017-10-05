@@ -1,0 +1,51 @@
+<div class="example-button-row">
+        <button md-raised-button color="accent" (click)="gotoDetail();"><md-icon class="example-icon">camera_enhance</md-icon>Add Cars</button>
+        </div>
+        <md-tab-group>
+          <md-tab label="Approved (4)">
+            <br/>
+            <md-grid-list cols="3">
+              <md-grid-tile>
+            <md-card class="example-card">
+              <md-card-header>
+                <div md-card-avatar class="example-header-image"></div>
+                <md-card-title>Subaru WRX STi</md-card-title>
+                <md-card-subtitle>Subaru</md-card-subtitle>
+              </md-card-header>
+              <img md-card-image src="assets/subaru_wrx_sti.jpg" alt="Subaru WRX STi">
+              <md-card-content>
+                <p>The Subaru Impreza (スバル・インプレッサ) is a compact family car that has been manufactured since 1992 by Subaru.
+                </p>
+              </md-card-content>
+              <md-card-actions>
+                <button md-button>Like</button>
+                <button md-button>SHARE</button>
+                <button md-button>Edit</button>
+              </md-card-actions>
+            </md-card>
+              </md-grid-tile>
+              <md-grid-tile>
+            <md-card class="example-card">
+                <md-card-header>
+                  <div md-card-avatar class="example-header-image-nissan"></div>
+                  <md-card-title>GT-R</md-card-title>
+                  <md-card-subtitle>Nissan</md-card-subtitle>
+                </md-card-header>
+                <img md-card-image src="assets/GTR.jpg" alt="GT-R">
+                <md-card-content>
+                  <p>The Nissan GT-R (also known as Godzilla) is a 2-door 2+2 high performance vehicle produced by Nissan unveiled in 2007.
+                  </p>
+                </md-card-content>
+                <md-card-actions>
+                  <button md-button>Like</button>
+                  <button md-button>SHARE</button>
+                  <button md-button>Edit</button>
+                </md-card-actions>
+              </md-card>
+            </md-grid-tile>
+          </md-grid-list>
+          </md-tab>
+        
+          <md-tab label="Rejected (2)"></md-tab>
+          <md-tab label="Pending (3)" ></md-tab>
+        </md-tab-group>
