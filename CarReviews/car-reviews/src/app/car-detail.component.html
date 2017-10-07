@@ -5,13 +5,13 @@
             <md-card class="example-card">
                     <md-card-header>
                       <div md-card-avatar class="example-header-image"></div>
-                      <md-card-title>Car Name</md-card-title>
-                      <md-card-subtitle>Input a company</md-card-subtitle>
+                      <md-card-title>{{car.name}}</md-card-title>
+                      <md-card-subtitle>{{car.company}}</md-card-subtitle>
                     </md-card-header>
-                    <img md-card-image src="assets/noimage.jpg" alt="Photo of a Shiba Inu">
+                    <img md-card-image src="{{image}}" alt="Photo of a Shiba Inu">
                     <md-card-content>
                       <p>
-                        This is the description are a of your car. You can explan why your car is fantastic.
+                        {{car.description}}
                       </p>
                     </md-card-content>
                     <md-card-actions>
@@ -25,30 +25,29 @@
         <md-card>
                 <form class="example-form">
                         <md-form-field class="example-full-width">
-                                <input mdInput placeholder="Name">
+                                <input mdInput placeholder="Name" name="name" [(ngModel)]="car.name">
                         </md-form-field>
                       
                         <p>
                         <md-form-field class="example-full-width">
-                                <input mdInput placeholder="Company">
+                                <input mdInput placeholder="Company" name="company" [(ngModel)]="car.company">
                           </md-form-field>
                         </p>
                         <p>
                           <md-form-field class="example-full-width">
-                                <textarea mdInput placeholder="Description"></textarea>
+                                <textarea mdInput placeholder="Description" name="description" [(ngModel)]="car.description"></textarea>
                           </md-form-field>
                         </p>
                         
                         <p>
-                                <input hidden="true" id="input-file-id" type="file" accept="image/*" (change)="upload(fl.files)"/>
-                                <label for="input-file-id" class="mat-raised-button mat-basic">Choose image</label>
+                               <input hidden="true" id="upfile" type="file" name="upfile" #fl accept="image/*" (change)="upload(fl.files)"/>
+                                <label for="upfile" class="mat-raised-button mat-basic">Choose image</label>
                 
                         </p>
 
                         <p>
                             <button md-fab color="accent"><md-icon class="example-icon">file_upload</md-icon></button>
                         </p>
-
                       </form>
 
         </md-card>
