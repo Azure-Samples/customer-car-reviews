@@ -44,12 +44,14 @@
                                 <label for="upfile" class="mat-raised-button mat-basic">Choose image</label>
                 
                         </p>
-
+                      </form>
+                      
+                      <form>
                         <p>
-                            <button md-fab color="accent"><md-icon class="example-icon">file_upload</md-icon></button>
+                            <button md-fab color="accent"><md-icon class="example-icon" (click)="submit()">file_upload</md-icon></button>
                         </p>
                       </form>
-
+                      
         </md-card>
     </md-grid-tile>
 </md-grid-list>

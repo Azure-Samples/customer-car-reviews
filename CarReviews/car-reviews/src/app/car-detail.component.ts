@@ -59,6 +59,25 @@ export class CarDetailComponent {
     }
   }
 
+  submit() {
+
+    let headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    
+    let options = new RequestOptions({
+      headers: headers
+    });
+    let requestObject = {"properties": null, "type": "object"}
+    requestObject.properties = this.car;
+    console.log(JSON.stringify(this.car));
+    let data = this.car;
+    this.http.post("https://prod-07.japaneast.logic.azure.com:443/workflows/69c3cbe052374fa3bc54a51c6ed00935/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=tkPN9Gciye_QJHfwreCsJmWqGUuEIGHijsWUXDY9Ltk", data, options)
+    .subscribe(
+      data => console.log(data),
+      error => console.log(error)
+    );
+  }
+
 }
 
 
