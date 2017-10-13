@@ -3,7 +3,7 @@
         <button md-raised-button color="accent" (click)="gotoDetail();"><md-icon class="example-icon">camera_enhance</md-icon>Add Cars</button>
         </div>
         <md-tab-group>
-          <md-tab label="Approved (4)">
+          <md-tab label="Approved ({{approvedCars.length}})">
             <br/>
             <md-grid-list cols="3">
               <md-grid-tile *ngFor="let c of approvedCars">
@@ -29,7 +29,7 @@
 
           </md-tab>
         
-          <md-tab label="Rejected (2)">
+          <md-tab label="Rejected ({{rejectedCars.length}})">
               <br/>
               <md-grid-list cols="3">
                 <md-grid-tile *ngFor="let c of rejectedCars">
@@ -53,7 +53,7 @@
                 </md-grid-tile>
             </md-grid-list>
           </md-tab>
-          <md-tab label="Pending (3)" >
+          <md-tab label="Pending ({{pendingCars.length}})" >
               <br/>
               <md-grid-list cols="3">
                 <md-grid-tile *ngFor="let c of pendingCars">
