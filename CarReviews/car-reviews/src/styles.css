@@ -31,18 +31,6 @@ body {
     background-image: url('assets/ms.png');
     background-size: cover;
   }
-  .example-header-image-subaru {
-    background-image: url('assets/subaru_logo.jpg');
-    background-size: cover;
-  }
-  .example-header-image-nissan {
-    background-image: url('assets/nissan.png');
-    background-size: cover;
-  }
-  .example-header-image-mazda {
-    background-image: url('assets/mazda_logo.jpg');
-    background-size: cover;
-  }
 
   .example-button-row {
     display: flex;
