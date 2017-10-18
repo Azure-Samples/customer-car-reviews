@@ -4,6 +4,8 @@ Single page application of Car Review App.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.3.
 
+[Demo site](https://carreviewstr.blob.core.windows.net/web/index.html)
+
 ## Prerequisite 
 
 Copy and edit the environment variables
