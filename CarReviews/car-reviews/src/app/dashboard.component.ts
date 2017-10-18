@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Headers, RequestOptions } from '@angular/http';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ export class DashboardComponent implements OnInit{
     let options = new RequestOptions({
       headers: headers
     });
-    this.http.get('http://localhost:7071/api/GetCars/approved')
+    let url = environment.getCarsUrl.replace(/\{state\}/, 'approved')
+    this.http.get(url)
     .subscribe(
       data => {
         this.approvedCars = data.json();
@@ -31,8 +33,8 @@ export class DashboardComponent implements OnInit{
       },
       error => console.log(error)
     );
-
-    this.http.get('http://localhost:7071/api/GetCars/rejected')
+    url = environment.getCarsUrl.replace(/\{state\}/, 'rejected')
+    this.http.get(url)
     .subscribe(
       data => {
         this.rejectedCars = data.json();
@@ -40,8 +42,8 @@ export class DashboardComponent implements OnInit{
       },
       error => console.log(error)
     );
-
-    this.http.get('http://localhost:7071/api/GetCars/pending')
+    url = environment.getCarsUrl.replace(/\{state\}/, 'pending')
+    this.http.get(url)
     .subscribe(
       data => {
         this.pendingCars = data.json();
