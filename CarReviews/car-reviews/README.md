@@ -8,13 +8,49 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Prerequisite 
 
-Copy and edit the environment variables
+### Node 
+
+Download the [node](https://nodejs.org/en/). 6.9.0+ required. However, I recommend 8.5+ You might use the [Azure Functions CLI](https://blogs.msdn.microsoft.com/appserviceteam/2017/09/25/develop-azure-functions-on-any-platform/).It recommend 8.5+   
+
+### Angular CLI
 
 ```
-cd environments
-cp enviornment.ts.example environment.ts  // Dev Environment Settings
-cp environment.prod.ts.example environment.prod.ts // Production Environment Settings
+npm install -g @angular/cli
 ```
+
+## Clone this repo
+
+Clone this repo
+
+```
+git clone git@github.com:Azure-Samples/customer-car-reviews.git
+````
+
+## restore npm
+
+```
+cd customer-car-reviews
+cd CarReviewes
+cd car-reviews
+npm install
+```
+
+### Configure enviornment settings
+
+In this repo, I include some example settings like `environment.ts.example` and `environment.prod.ts.example`. Create the copy with ust removing `.example` to the same directory. 
+
+In case of mac, 
+
+```
+cd src
+cd environments
+cp enviornment.ts.example environment.ts  
+cp environment.prod.ts.example environment.prod.ts 
+```
+
+On windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
+
+You can edit these files to fit your environment. 
 
 ## Development server
 
@@ -24,9 +60,14 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 $ ng serve
 ```
 
-## Code scaffolding
+`ng serve` create `dev` environment that uses `environment.ts`. If you want to boot `prod` environment that uses `environment.prod.ts` you can use this
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```
+$ ng serve --environment prod
+```
+
+**NOTE** 
+if you have `Cannot read property 'length' of undefined` error, you might forget to create `enviornment.ts` or `environment.prod.ts`.
 
 ## Build
 
