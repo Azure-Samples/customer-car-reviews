@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 
 import {
-  MdButtonModule,
-  MdMenuModule,
-  MdToolbarModule,
-  MdIconModule,
-  MdCardModule,
+  MatMenuModule,
+  MatToolbarModule,
+  MatIconModule,
   MatTabsModule,
   MatCardModule,
   MatGridListModule,
@@ -15,11 +13,9 @@ import {
 
 @NgModule({
   imports: [
-    MdButtonModule,
-    MdMenuModule,
-    MdToolbarModule,
-    MdIconModule,
-    MdCardModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatIconModule,
     MatTabsModule,
     MatCardModule,
     MatGridListModule,
@@ -27,11 +23,9 @@ import {
     MatInputModule
   ],
   exports: [
-    MdButtonModule,
-    MdMenuModule,
-    MdToolbarModule,
-    MdIconModule,
-    MdCardModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatIconModule,
     MatTabsModule,
     MatCardModule,
     MatGridListModule,
