@@ -59,6 +59,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 ```
 $ ng serve
 ```
+Then open your browser and go to `http://127.0.0.1:4200`. **NOTE**: This is NOT `localhost` because of [the issue of webpack with Angular CLI](https://github.com/webpack/webpack-dev-server/issues/416). 
 
 `ng serve` create `dev` environment that uses `environment.ts`. If you want to boot `prod` environment that uses `environment.prod.ts` you can use this
 
