@@ -1,0 +1,17 @@
+{
+  "bindings": [
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "queueTrigger",
+      "name": "rejectedReview",
+      "queueName": "eventsend",
+      "connection": "contentapproval_STORAGE",
+      "direction": "in"
+    }
+  ],
+  "disabled": false
+}

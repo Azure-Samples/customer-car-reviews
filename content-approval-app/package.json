@@ -1,0 +1,17 @@
+{
+  "name": "description-approver",
+  "version": "1.0.0",
+  "description": "Verify Description and Image content provided by the users",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kanio",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "uuid": "^3.1.0",
+    "moment": "^2.19.1"
+  }
+}

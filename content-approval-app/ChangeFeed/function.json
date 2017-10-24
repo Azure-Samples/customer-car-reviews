@@ -1,0 +1,22 @@
+{
+  "bindings": [
+    {
+      "type": "cosmosDBTrigger",
+      "name": "input",
+      "direction": "in",
+      "leaseCollectionName": "leases",
+      "connectionStringSetting": "CosmosDbConnectionString",
+      "databaseName": "cardb",
+      "collectionName": "car",
+      "createLeaseCollectionIfNotExists": true
+    },
+    {
+      "type": "queue",
+      "name": "outputQueueItem",
+      "queueName": "changefeed",
+      "connection": "contentapproval_STORAGE",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
