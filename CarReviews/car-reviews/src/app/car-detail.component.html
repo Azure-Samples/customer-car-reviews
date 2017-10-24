@@ -1,0 +1,57 @@
+
+<br/>
+<mat-grid-list cols="2" rowHeight="1:1">
+    <mat-grid-tile>
+            <mat-card class="example-card">
+                    <mat-card-header>
+                      <div mat-card-avatar class="example-header-image"></div>
+                      <mat-card-title>{{car.name}}</mat-card-title>
+                      <mat-card-subtitle>{{car.company}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <img mat-card-image src="{{image}}" alt="Photo of a Shiba Inu">
+                    <mat-card-content>
+                      <p>
+                        {{car.description}}
+                      </p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <button mat-button>LIKE</button>
+                      <button mat-button>SHARE</button>
+                      <button mat-button>Edit</button>
+                    </mat-card-actions>
+                  </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <mat-card>
+                <form class="example-form">
+                        <mat-form-field class="example-full-width">
+                                <input matInput placeholder="Name" name="name" [(ngModel)]="car.name">
+                        </mat-form-field>
+                      
+                        <p>
+                        <mat-form-field class="example-full-width">
+                                <input matInput placeholder="Company" name="company" [(ngModel)]="car.company">
+                          </mat-form-field>
+                        </p>
+                        <p>
+                          <mat-form-field class="example-full-width">
+                                <textarea matInput placeholder="Description" name="description" [(ngModel)]="car.description"></textarea>
+                          </mat-form-field>
+                        </p>
+                        
+                        <p>
+                               <input hidden="true" id="upfile" type="file" name="upfile" #fl accept="image/*" (change)="upload(fl.files)"/>
+                                <label for="upfile" class="mat-raised-button mat-basic">Choose image</label>
+                
+                        </p>
+                      </form>
+                      
+                      <form>
+                        <p>
+                            <button mat-fab color="accent"><mat-icon class="example-icon" (click)="submit()">file_upload</mat-icon></button>
+                        </p>
+                      </form>
+                      
+        </mat-card>
+    </mat-grid-tile>
+</mat-grid-list>
