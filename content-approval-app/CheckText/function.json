@@ -1,0 +1,36 @@
+{
+  "bindings": [
+    {
+      "type": "queueTrigger",
+      "name": "carReview",
+      "queueName": "changefeed",
+      "connection": "contentapproval_STORAGE",
+      "direction": "in"
+    },
+    {
+      "type": "queue",
+      "name": "carReviewTextChecked",
+      "queueName": "checkimage",
+      "connection": "contentapproval_STORAGE",
+      "direction": "out"
+    },
+    {
+      "type": "documentDB",
+      "name": "outputDocument",
+      "databaseName": "cardb",
+      "collectionName": "car",
+      "createIfNotExists": false,
+      "partitionKey": "/company",
+      "connection": "CosmosDbConnectionString",
+      "direction": "out"
+    },
+    {
+      "type": "queue",
+      "name": "rejectedReviewItem",
+      "queueName": "eventsend",
+      "connection": "contentapproval_STORAGE",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
