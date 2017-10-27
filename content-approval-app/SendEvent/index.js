@@ -31,8 +31,7 @@ if (rejectedReview && rejectedReview.id && rejectedReview.company && rejectedRev
         context.done(); 
     })
     .catch(function (err) {
-        throw err;
-        context.done();
+        context.done(err, {});
     });
     } else {
         throw "Provide correct input for the function";

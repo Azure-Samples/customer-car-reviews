@@ -23,6 +23,13 @@
       "partitionKey": "/company",
       "connection": "CosmosDbConnectionString",
       "direction": "out"
+    },
+    {
+      "type": "queue",
+      "name": "poisonedMessage",
+      "queueName": "checkimage-poison",
+      "connection": "contentapproval_STORAGE",
+      "direction": "out"
     }
   ],
   "disabled": false

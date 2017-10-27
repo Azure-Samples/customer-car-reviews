@@ -42,8 +42,7 @@ if (carReview && carReview.description && (!carReview.textApproval ||  carReview
     })
     .catch(function (err) {
        context.log(err);
-       throw err;
-       context.done();
+      context.done(err, {});
     });  
     }
     else {
