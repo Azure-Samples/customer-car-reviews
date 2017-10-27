@@ -1,9 +1,14 @@
 var request = require('request-promise');
 
 module.exports = function (context, carReviewTextChecked) {
+
+if(context.bindingData.dequeueCount > 2) {
+  context.bindings.poisonedMessage = carReviewTextChecked;
+  context.done();
+}
+
 if (carReviewTextChecked && (!carReviewTextChecked.imageApproval ||  carReviewTextChecked.imageApproval  != "complete")) {
-   
-   context.log(carReviewTextChecked.image_url);
+
     var options = {
         uri: process.env["VisionApiUrl"],
         method: 'POST',
@@ -43,8 +48,7 @@ if (carReviewTextChecked && (!carReviewTextChecked.imageApproval ||  carReviewTe
     })
     .catch(function (err) {
        context.log(err);
-       throw err;
-       context.done();
+       context.done(err, {});
     });
     }
     else {
