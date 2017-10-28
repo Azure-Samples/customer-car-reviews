@@ -1,0 +1,45 @@
+var Busboy = require('busboy');
+
+
+    
+const createAzureFunctionHandler = require("azure-function-express").createAzureFunctionHandler;
+    const express = require("express");
+
+
+
+    let azure = require('azure-storage');
+    let blobService = azure.createBlobService(process.env["carreviewstr_STORAGE"]);
+    blobService.createContainerIfNotExists('cars', function(error, result, response) {
+
+    });
+
+
+
+    const app = express();
+    app.post("/api/FileUploadNode", function (req, res) {
+        console.log('body:' + JSON.stringify(req.body));
+        console.log("-----coming-----");
+        let busboy = new Busboy({ headers: req.headers });
+        busboy.on('file', function(fieldname, file, filename, encoding, mimetype){
+            console.log("------busboy----")
+            console.log('filename:' + filename);
+            blobServcie.createBlockBlobFromStream(bfilename, stream, function(error, result, response){
+                        bfilename = filename;
+                        stream = file;
+                        
+            });
+        
+        });
+        console.log("-----2 setp");
+        busboy.on('finish', function() {
+            console.log("---finish --");
+            res.writeHead(200, { 'Connection': 'close' });
+            res.end("That's all folks!");
+        });
+        console.log("-----3 step");
+        return req.pipe(busboy);
+
+        console.log("-----4 step");
+    });
+
+    module.exports = createAzureFunctionHandler(app);

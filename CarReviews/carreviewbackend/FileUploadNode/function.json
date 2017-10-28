@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "route": "FileUploadNode/{filename}",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "type": "blob",
+      "name": "outputBlob",
+      "path": "outcontainer/{filename}",
+      "connection": "carreviewstr_STORAGE",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
