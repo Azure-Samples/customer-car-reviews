@@ -11,14 +11,15 @@ import { ImageUploadModule } from 'angular2-image-upload';
 import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
-import { CarDetailComponent } from './car-detail.component';
+import { CarDetailComponent, ConfirmDialog } from './car-detail.component';
 import { DashboardComponent } from './dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CarDetailComponent,
-    DashboardComponent
+    DashboardComponent,
+    ConfirmDialog
   ],
   imports: [
     BrowserModule,
@@ -28,6 +29,9 @@ import { DashboardComponent } from './dashboard.component';
     BrowserAnimationsModule,
     AppRoutingModule,
     ImageUploadModule.forRoot(),
+  ],
+  entryComponents: [
+    ConfirmDialog
   ],
   providers: [],
   bootstrap: [AppComponent]

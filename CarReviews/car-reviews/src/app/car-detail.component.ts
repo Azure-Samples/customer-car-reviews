@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { Car } from './car';
 import { Http, Headers, RequestOptions } from '@angular/http';
 declare const Buffer;
 import * as fs from 'fs';
 import { environment } from '../environments/environment';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +17,26 @@ export class CarDetailComponent {
   car: Car;
 
  
-  constructor(private http:Http) {
+  constructor(private http:Http, public dialog:MatDialog, private router: Router) {
       this.car = new Car();
       this.car.name = "";
       this.car.company = "";
       this.car.description = "";
       this.car.image_url = "assets/noimage.jpg";
       this.car.state = "pending";
+  }
+
+  openDialog(): void {
+    let dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '400px',
+      height: '215px',
+      data: {name: this.car.name}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("The dialog was closed");
+      this.router.navigate(['/dashboard']);
+    })
   }
 
   executeUpload(base64encoded: string, filename: string) {
@@ -75,11 +90,36 @@ export class CarDetailComponent {
     let data = this.car;
     this.http.post(environment.createCarUrl, data, options)
     .subscribe(
-      data => console.log(data),
+      data => {
+        console.log(data)
+        this.openDialog();
+      },
       error => console.log(error)
     );
   }
 
 }
 
+@Component({
+  selector: 'confirm-dialog',
+  template: `
+  <h2 mat-dialog-title>Success</h2>
+  <mat-dialog-content>
+  <p>Thank you for uploading!</p>
+  <p>{{data.name}} is waiting for evaluation</p>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button [mat-dialog-close]="true">Close</button>
+  </mat-dialog-actions>
+  `
+})
+export class ConfirmDialog {
+     constructor(
+      public dialogRef: MatDialogRef<ConfirmDialog>,
+      @Inject(MAT_DIALOG_DATA) public data: any) {}
+
+      onClick(): void {
+        this.dialogRef.close();
+      }
+}
 
