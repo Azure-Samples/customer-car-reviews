@@ -9,13 +9,19 @@ import { environment } from '../environments/environment';
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit{
-
+  
   title = 'Car Reviews';
   state = 'approved';
   approvedCars = [];
   rejectedCars = [];
   pendingCars = [];
-  constructor(private router: Router, private http: Http) {}
+
+  constructor(private router: Router, private http: Http) {
+    console.log('constructor');
+    this.approvedCars = JSON.parse(localStorage.getItem("approvedCars"));
+    this.rejectedCars = JSON.parse(localStorage.getItem("rejectedCars"));
+    this.pendingCars = JSON.parse(localStorage.getItem("pendingCars"));
+  }
   
   ngOnInit(): void {
 
@@ -29,6 +35,7 @@ export class DashboardComponent implements OnInit{
     .subscribe(
       data => {
         this.approvedCars = data.json();
+        localStorage.setItem('approvedCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
       error => console.log(error)
@@ -38,6 +45,7 @@ export class DashboardComponent implements OnInit{
     .subscribe(
       data => {
         this.rejectedCars = data.json();
+        localStorage.setItem('rejectedCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
       error => console.log(error)
@@ -47,6 +55,7 @@ export class DashboardComponent implements OnInit{
     .subscribe(
       data => {
         this.pendingCars = data.json();
+        localStorage.setItem('pendingCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
       error => console.log(error)
