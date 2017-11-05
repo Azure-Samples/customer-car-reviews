@@ -1,0 +1,181 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logicAppName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "metadata": {
+        "description": "Name of the Logic App."
+      }
+    },
+    "logicAppLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2"
+      ],
+      "metadata": {
+        "description": "Location of the Logic App."
+      }
+    },
+    "documentdb_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "documentdb"
+    },
+    "documentdb_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "carreviewdb"
+    },
+    "documentdb_1_databaseAccount": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the account without 'documents.azure.com' part"
+      },
+      "defaultValue": "carreview"
+    },
+    "documentdb_1_accessKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Primary or Secondary Key"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('logicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('logicAppLocation')]",
+      "tags": {
+        "displayName": "LogicApp"
+      },
+      "apiVersion": "2016-06-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "Create_or_update_document": {
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['documentdb']['connectionId']"
+                  }
+                },
+                "method": "post",
+                "path": "/dbs/@{encodeURIComponent('cardb')}/colls/@{encodeURIComponent('car')}/docs",
+                "headers": {
+                  "x-ms-documentdb-partitionkey": "@triggerBody()?['name']"
+                },
+                "body": {
+                  "company": "@{triggerBody()?['company']}",
+                  "description": "@{triggerBody()?['description']}",
+                  "id": "@{guid()}",
+                  "imageApproval": "pending",
+                  "image_url": "@{triggerBody()?['image_url']}",
+                  "name": "@{triggerBody()?['name']}",
+                  "state": "@{triggerBody()?['state']}",
+                  "textApproval": "pending"
+                }
+              },
+              "runAfter": {}
+            }
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "manual": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {
+                  "properties": {
+                    "company": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "image_url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
+        },
+        "parameters": {
+          "$connections": {
+            "value": {
+              "documentdb": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'documentdb')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('documentdb_1_Connection_Name'))]",
+                "connectionName": "[parameters('documentdb_1_Connection_Name')]"
+              }
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', parameters('documentdb_1_Connection_Name'))]"
+      ]
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2016-06-01",
+      "name": "[parameters('documentdb_1_Connection_Name')]",
+      "location": "[parameters('logicAppLocation')]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'documentdb')]"
+        },
+        "displayName": "[parameters('documentdb_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "databaseAccount": "[parameters('documentdb_1_databaseAccount')]",
+          "accessKey": "[parameters('documentdb_1_accessKey')]"
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
