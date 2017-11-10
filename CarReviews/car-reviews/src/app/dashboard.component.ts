@@ -18,9 +18,9 @@ export class DashboardComponent implements OnInit{
 
   constructor(private router: Router, private http: Http) {
     console.log('constructor');
-    this.approvedCars = JSON.parse(localStorage.getItem("approvedCars"));
-    this.rejectedCars = JSON.parse(localStorage.getItem("rejectedCars"));
-    this.pendingCars = JSON.parse(localStorage.getItem("pendingCars"));
+    this.approvedCars = JSON.parse(localStorage.getItem("approvedCars")) || [];
+    this.rejectedCars = JSON.parse(localStorage.getItem("rejectedCars")) || [];
+    this.pendingCars = JSON.parse(localStorage.getItem("pendingCars")) || [];
   }
   
   ngOnInit(): void {
