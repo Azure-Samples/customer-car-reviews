@@ -1,14 +1,13 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=carreviewbackena3d7;AccountKey=aR3D1Cm8rF77mk3i3SHBox37zsKZMGnR7R2kF9Z6MuDl2Y4G0HLzFoztpAPvG2LJ5N40NagWUauZUcZCoPKRoA==",
-    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=carreviewbackena3d7;AccountKey=aR3D1Cm8rF77mk3i3SHBox37zsKZMGnR7R2kF9Z6MuDl2Y4G0HLzFoztpAPvG2LJ5N40NagWUauZUcZCoPKRoA==",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=carreviewbackena3d7;AccountKey=9169kC+XBGnxh1Kr5BYLSMd3eYgFa4L/6bd/7lgmYFRmRd0dICzOFegh7wgqwjttJ9fFddbi2yMD+aNciRyinw==",
+    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=carreviewbackena3d7;AccountKey=9169kC+XBGnxh1Kr5BYLSMd3eYgFa4L/6bd/7lgmYFRmRd0dICzOFegh7wgqwjttJ9fFddbi2yMD+aNciRyinw==",
     "FUNCTIONS_EXTENSION_VERSION": "beta",
     "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
     "AzureWebJobsSecretStorageType": "disabled",
-    "COSMOS_DB_HOST": "https://carreview.documents.azure.com:443/",
-    "COSMOS_DB_KEY": "1jpwIU3u9QAn2snLpQICxH9cVCexllDA4GaLygDjA8zMmEh34wNsRfT7VknsCyOu6NVgN33oSSyMl5UHbizeFA==",
-    "carreviewstr_STORAGE": "DefaultEndpointsProtocol=https;AccountName=carreviewstrorage;AccountKey=xv8uWVUXJKgjmRfAMC6vmZnIhrB0NV0ORqfQNLVjBvw5L/LD9uieAgJFJt+Mss0EXSy52IBYDFVrcULMcCeVag==;EndpointSuffix=core.windows.net"
+    "carreviewstr_COSMOSDB": "AccountEndpoint=https://carreview.documents.azure.com:443/;AccountKey=DjxGNIrnlnzWGAePrIQxnfc1sc3iZkOOcyHHSJLC4FdU2Q1hpyeKHkqTO4ANobm6BUizpJBFmbRSLkHoTfuVcg==;",
+    "carreviewstr_STORAGE": "DefaultEndpointsProtocol=https;AccountName=carreviewstorage;AccountKey=F+gwmFMDThvhyPSRGztdBUpNGIpLC9bVD7qWd7uiFj7mueElqOz35f5aafnsT5+g7V4bjJCAQIoqjM/eHEqQXw==;EndpointSuffix=core.windows.net"
   },
   "ConnectionStrings": {},
   "Host": {

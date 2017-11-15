@@ -26,17 +26,17 @@ An ARM template was created so you can deploy the solution to your own subscript
 ## Configure Proxy File and Deploy the ARM template
 
 ### Unique word as the base of your project
-The first step is to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's pretty short and doesn't have any special characters.
+The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's pretty short and doesn't have any special characters.
 
-Have you thoguht of that short unique word? Great. 
+Have you thoguht of that short unique word? Great, now let's continue.
 
 ### Edit Azure Function Proxy 
-Now edit the file `proxies.json` in the `proxyfunctionapp` folder and replace `YOURUNIQUEWORD` with that unique word.
+Now edit the file `proxies.json` in the `src/proxyfunctionapp` folder and replace `YOURUNIQUEWORD` with that unique word.
 
 ### Edit ARM Template Parameters and Deploy
-Next, let's deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or overwrite the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). Make sure to choose `West Central US` or `West US 2` as these are the regions currently supported by Event Grid at the time of writing.  
+Next, deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or override the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). Make sure to choose `West Central US` or `West US 2` as these are the regions currently supported by Event Grid at the time of writing.  
 
-For example, using the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) you can run the following commands (replacing the placeholder values for subscription, group, unique word, and email):
+For example, using the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) you can run the following commands (replace the placeholder values for subscription, group, unique word, and email):
 ```azurecli
 az login
 
@@ -70,7 +70,7 @@ The Office 365 API Connection is used to send the notification email for a decli
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
 ## Edit and upload SPA Website Files
-The next and final step is to build and upload the content of the reviews website to blob storage. The website is an Angular Single Page Application. We will host it on blob storage and exposed via the Proxy function that was created by the ARM template. 
+The next step is to build and upload the content of the reviews website to blob storage. The website is an Angular Single Page Application. We will host it on blob storage and exposed via the Proxy function that was created by the ARM template. 
 
 Follow the instructions to build the site locally by following the [instructions for the SPA](src/spa/README.md) with the prod configuration.
 
@@ -91,7 +91,7 @@ Test instructions end to end
 
 # Session Slides
 
-This demo was created for the Microsoft Keynote at Serverlessconf Tokyo in November 2017. You can [download the slides](/ServerlessConf Tokyo 2017 - Microsoft Keynote v2.pdf).
+This demo was created for the Microsoft Keynote at Serverlessconf Tokyo in November 2017. You can [download the slides here](/ServerlessConfTokyo2017MicrosoftKeynote).
 
 # Challenges for you!
 

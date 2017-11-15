@@ -422,7 +422,7 @@
                             "value": "6.5.0"
                         },
                         {
-                            "name": "CosmosDbConnectionString",
+                            "name": "carreviewstr_COSMOSDB",
                             "value": "[concat('https://', toLower(variables('CosmosDBName')), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName')), '2015-04-08').primaryMasterKey)]"
                         },
                         {

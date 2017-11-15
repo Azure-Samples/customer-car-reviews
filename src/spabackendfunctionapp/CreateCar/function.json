@@ -18,7 +18,7 @@
       "databaseName": "cardb",
       "collectionName": "car",
       "createIfNotExists": true,
-      "connectionStringSetting": "CosmosDbConnectionString",
+      "connectionStringSetting": "carreviewstr_COSMOSDB",
       "direction": "out",
       "partitionKey": "/name"
     }

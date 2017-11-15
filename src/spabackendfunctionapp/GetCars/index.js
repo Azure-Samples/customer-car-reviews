@@ -3,7 +3,7 @@ module.exports = function (context, req) {
 
     context.log(`Http trigger state passed in: ${context.bindingData.state}`);
 
-    if (context.bindings.inputDocuments && context.bindings.inputDocuments.length == 1) {
+    if (context.bindings.inputDocuments && context.bindings.inputDocuments.length > 0) {
         context.res = {
             body: context.bindings.inputDocuments
         };

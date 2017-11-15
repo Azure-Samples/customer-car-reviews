@@ -17,7 +17,7 @@
       "databaseName": "cardb",
       "collectionName": "car",
       "sqlQuery": "select * from car c where c.state = {state} order by c.name desc",
-      "connectionStringSetting": "CosmosDbConnectionString",
+      "connectionStringSetting": "carreviewstr_COSMOSDB",
       "direction": "in"
     },
     {

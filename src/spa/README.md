@@ -20,7 +20,7 @@ npm install -g @angular/cli
 
 ## restore npm
 
-Browse to the `spa` app `src` folder and restore the npm packages:
+Browse to the `src/spa` folder and restore the npm packages:
 ```
 cd customer-car-reviews/src/spa/src
 npm install
@@ -39,7 +39,7 @@ cp environment.prod.ts.example environment.prod.ts
 
 On windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
 
-Then edit the values in these files to fit your environment. 
+Then edit the values in these files to fit your environment. You will need the  
 
 ## Local Development
 
@@ -50,17 +50,17 @@ $ ng serve
 ```
 Then open your browser and go to `http://127.0.0.1:4200`. **NOTE**: This is NOT `localhost` because of [the issue of webpack with Angular CLI](https://github.com/webpack/webpack-dev-server/issues/416). 
 
-`ng serve` create `dev` environment that uses `environment.ts`. If you want to boot `prod` environment that uses `environment.prod.ts` you can use this
+`ng serve` creates a `dev` environment that uses `environment.ts`. If you want to boot `prod` environment that uses `environment.prod.ts` you can use this
 
 ```
 $ ng serve --environment prod
 ```
 
-> Note: if you have `Cannot read property 'length' of undefined` error, you might have forgotten to create `enviornment.ts` or `environment.prod.ts`.
+> Note: if you run into `Cannot read property 'length' of undefined` error, you might have forgotten to create `enviornment.ts` or `environment.prod.ts`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
+Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
 
 ```
 $ ng b -prod --base-href /web/
