@@ -1,0 +1,571 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "unique_name": {
+            "type": "string"
+        },
+        "notification_emails": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "CosmosDBName": "[concat(parameters('unique_name'),'dbacct')]",
+        "StorageAccountName": "[concat(parameters('unique_name'),'stor')]",
+        "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
+        "FunctionAppPlanName": "[concat(parameters('unique_name'),'appplan')]",
+        "ComputerVisionName": "[concat(parameters('unique_name'),'computervision')]",
+        "ContentModeratorName": "[concat(parameters('unique_name'),'contentmoderator')]",
+        "EventGridTopicName": "[concat(parameters('unique_name'),'eventtopic')]",
+        "EventGridConnectionName": "[concat(parameters('unique_name'),'eventgridconnection')]",
+        "CosmosDBConnectionName": "[concat(parameters('unique_name'),'cosmosdbconnection')]",
+        "Office365ConnectionName": "[concat(parameters('unique_name'),'office365connection')]",
+        "singlequote": "'"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "F0"
+            },
+            "kind": "ComputerVision",
+            "name": "[variables('ComputerVisionName')]",
+            "apiVersion": "2016-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "ContentModerator",
+            "name": "[variables('ContentModeratorName')]",
+            "apiVersion": "2016-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "kind": "GlobalDocumentDB",
+            "name": "[variables('CosmosDBName')]",
+            "apiVersion": "2015-04-08",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "name": "[variables('CosmosDBName')]"
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[variables('StorageAccountName')]",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {},
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "name": "[concat(parameters('unique_name'),'handlerejectedreviewlogic')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_resource_event_occurs": {
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "destination": {
+                                            "endpointType": "webhook",
+                                            "properties": {
+                                                "endpointUrl": "@{listCallbackUrl()}"
+                                            }
+                                        }, 
+                                        "topic": "[resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))]"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureeventgrid']['connectionId']"
+                                    }
+                                },
+                                "path": "[concat('/subscriptions/@{encodeURIComponent(', variables('singlequote'), subscription().subscriptionId, variables('singlequote'), ')}/providers/@{encodeURIComponent(', variables('singlequote'), 'Microsoft.EventGrid.topics', variables('singlequote'), ')}/resource/eventSubscriptions')]",
+                                "queries": {
+                                    "x-ms-api-version": "2017-06-15-preview"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Condition": {
+                            "actions": {
+                                "Create_or_update_document": {
+                                    "runAfter": {
+                                        "Parse_JSON": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "company": "@{body('Parse_JSON')?['company']}",
+                                            "description": "@{body('Parse_JSON')?['description']}",
+                                            "id": "@{body('Parse_JSON')?['id']}",
+                                            "image_url": "@{body('Parse_JSON')?['image_url']}",
+                                            "name": "@{body('Parse_JSON')?['name']}",
+                                            "state": "approved"
+                                        },
+                                        "headers": {
+                                            "x-ms-documentdb-is-upsert": true,
+                                            "x-ms-documentdb-partitionkey": "@body('Parse_JSON')?['name']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['documentdb']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/dbs/@{encodeURIComponent('cardb')}/colls/@{encodeURIComponent('car')}/docs"
+                                    }
+                                },
+                                "Parse_JSON": {
+                                    "runAfter": {},
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@triggerBody()?['data']",
+                                        "schema": {
+                                            "properties": {
+                                                "company": {
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "type": "string"
+                                                },
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "image_url": {
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "rejectionReason": {
+                                                    "type": "string"
+                                                },
+                                                "state": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Send_approval_email": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": "@equals(body('Send_approval_email')?['SelectedOption'], 'Approve')",
+                            "type": "If"
+                        },
+                        "Send_approval_email": {
+                            "runAfter": {},
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "Message": {
+                                        "Body": "A new car review has been rejected.  User @{triggerBody()?['data']['name']} from @{triggerBody()?['data']['company']} send a new review that was rejected because @{triggerBody()?['data']['rejectionReason']}. \nReview image:\n@{triggerBody()?['data']['image_url']}\nReview description:\n@{triggerBody()?['data']['description']}.\n",
+                                        "Importance": "Normal",
+                                        "Options": "Approve, Reject",
+                                        "Subject": "A new car has been auto rejected: please review",
+                                        "To": "[parameters('notification_emails')]"
+                                    },
+                                    "NotificationUrl": "@{listCallbackUrl()}"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                },
+                                "path": "/approvalmail/$subscriptions"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureeventgrid": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('EventGridConnectionName'))]",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureeventgrid')]"
+                            },
+                            "documentdb": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('CosmosDBConnectionName'))]",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/documentdb')]"
+                            },
+                            "office365": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('Office365ConnectionName'))]",
+                                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/office365')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', variables('EventGridConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', variables('CosmosDBConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', variables('Office365ConnectionName'))]",
+                "[resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[variables('EventGridConnectionName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "displayName": "eventgridconn",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureeventgrid')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[variables('CosmosDBConnectionName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "displayName": "carreviewdb",
+                "parameterValues": {
+                    "databaseAccount": "[variables('CosmosDBName')]",
+                    "accessKey": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName')), '2015-04-08').primaryMasterKey]"
+                },
+                "api": {
+                    "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/documentdb')]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[variables('Office365ConnectionName')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "displayName": "office365conn",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/office365')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[variables('EventGridTopicName')]",
+            "type": "Microsoft.EventGrid/topics",
+            "apiVersion": "2017-06-15-preview",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+            } 
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2015-08-01",
+            "name": "[variables('FunctionAppPlanName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "properties": {
+                "name": "[variables('FunctionAppPlanName')]",
+                "numberOfWorkers": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "comments": "The Function App used as a proxy to serve the single page application website that will be stored in blob storage",
+            "kind": "functionapp",
+            "name": "[concat(parameters('unique_name'),'siteproxy')]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~1"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppPlanName'))]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "6.5.0"
+                        },
+                        {
+                            "name": "AzureWebJobsSecretStorageType",
+                            "value": "disabled"
+                        },
+                        { 
+                            "name": "Project", 
+                            "value": "src/proxyfunctionapp"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "web",
+                    "type": "sourcecontrols",
+                    "dependsOn": [
+                      "[concat(parameters('unique_name'),'siteproxy')]"
+                    ],
+                    "properties": {
+                      "RepoUrl": "https://github.com/Azure-Samples/customer-car-reviews",
+                      "branch": "master",
+                      "IsManualIntegration": true
+                    }
+               }
+            ],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "comments": "The Function App that hosts the backend for the website for uploading images to blob storage and querying the CosmosDB collection",
+            "kind": "functionapp",
+            "name": "[concat(parameters('unique_name'),'sitebackend')]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "beta"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "6.5.0"
+                        },
+                        {
+                            "name": "CosmosDbConnectionString",
+                            "value": "[concat('https://', toLower(variables('CosmosDBName')), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName')), '2015-04-08').primaryMasterKey)]"
+                        },
+                        {
+                            "name": "carreviewstr_STORAGE",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppPlanName'))]"
+                        },
+                        {
+                            "name": "AzureWebJobsSecretStorageType",
+                            "value": "disabled"
+                        },
+                        { 
+                            "name": "Project", 
+                            "value": "src/spabackendfunctionapp"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "web",
+                    "type": "sourcecontrols",
+                    "dependsOn": [
+                      "[concat(parameters('unique_name'),'sitebackend')]"
+                    ],
+                    "properties": {
+                      "RepoUrl": "https://github.com/Azure-Samples/customer-car-reviews",
+                      "branch": "master",
+                      "IsManualIntegration": true
+                    }
+               }
+            ],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]",
+                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "comments": "The Function App that hosts the automated car review service functions",
+            "kind": "functionapp",
+            "name": "[concat(parameters('unique_name'),'reviewsvc')]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AzureWebJobsDashboard",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~1"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(variables('functionAppPlanName'))]"
+                        },
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "6.5.0"
+                        },
+                        {
+                            "name": "contentapproval_STORAGE",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('StorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+                        },
+                        {
+                            "name": "CosmosDbConnectionString",
+                            "value": "[concat('https://', toLower(variables('CosmosDBName')), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName')), '2015-04-08').primaryMasterKey)]"
+                        },
+                        {
+                            "name": "ContentModeratorApiUrl",
+                            "value": "[reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')), '2016-02-01-preview').endpoint]"
+                        },
+                        {
+                            "name": "ContentModeratorApiKey",
+                            "value": "[listKeys(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')),'2016-02-01-preview').key1]" 
+                        },
+                        {
+                            "name": "VisionApiUrl",
+                            "value": "[reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ComputerVisionName')), '2016-02-01-preview').endpoint]"
+                        },
+                        {
+                            "name": "VisionApiKey",
+                            "value": "[listKeys(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ComputerVisionName')),'2016-02-01-preview').key1]" 
+                        },
+                        {
+                            "name": "EventGridUrl",
+                            "value": "[reference(resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))).endpoint]"
+                        },
+                        {
+                            "name": "EventGridKey",
+                            "value": "[listkeys(resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName')), '2017-06-15-preview').key1]" 
+                        },
+                        {
+                            "name": "AzureWebJobsSecretStorageType",
+                            "value": "disabled"
+                        },
+                        { 
+                            "name": "Project", 
+                            "value": "src/approvalsvcfunctionapp"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "web",
+                    "type": "sourcecontrols",
+                    "dependsOn": [
+                      "[concat(parameters('unique_name'),'reviewsvc')]"
+                    ],
+                    "properties": {
+                      "RepoUrl": "https://github.com/Azure-Samples/customer-car-reviews",
+                      "branch": "master",
+                      "IsManualIntegration": true
+                    }
+               }
+            ],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]",
+                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]",
+                "[resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))]"
+            ]
+        }
+    ]
+}

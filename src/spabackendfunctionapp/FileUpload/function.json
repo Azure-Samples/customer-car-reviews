@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "FileUploadNode/{filename}",
+      "route": "FileUpload/{filename}",
       "methods": [
         "post"
       ]

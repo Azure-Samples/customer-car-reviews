@@ -1,0 +1,29 @@
+{
+  "disabled": false,
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "input",
+      "methods": [
+        "get"
+      ],
+      "route": "GetCars/{state:alpha}"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "inputDocuments",
+      "databaseName": "cardb",
+      "collectionName": "car",
+      "sqlQuery": "select * from car c where c.state = {state} order by c.name desc",
+      "connectionStringSetting": "CosmosDbConnectionString",
+      "direction": "in"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
+}

@@ -8,8 +8,7 @@
     "AzureWebJobsSecretStorageType": "disabled",
     "COSMOS_DB_HOST": "https://carreview.documents.azure.com:443/",
     "COSMOS_DB_KEY": "1jpwIU3u9QAn2snLpQICxH9cVCexllDA4GaLygDjA8zMmEh34wNsRfT7VknsCyOu6NVgN33oSSyMl5UHbizeFA==",
-    "carreviewstr_STORAGE": "DefaultEndpointsProtocol=https;AccountName=carreviewstrorage;AccountKey=xv8uWVUXJKgjmRfAMC6vmZnIhrB0NV0ORqfQNLVjBvw5L/LD9uieAgJFJt+Mss0EXSy52IBYDFVrcULMcCeVag==;EndpointSuffix=core.windows.net",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "dd92e4f5-1159-497b-ba89-4c5ec637d3be"
+    "carreviewstr_STORAGE": "DefaultEndpointsProtocol=https;AccountName=carreviewstrorage;AccountKey=xv8uWVUXJKgjmRfAMC6vmZnIhrB0NV0ORqfQNLVjBvw5L/LD9uieAgJFJt+Mss0EXSy52IBYDFVrcULMcCeVag==;EndpointSuffix=core.windows.net"
   },
   "ConnectionStrings": {},
   "Host": {

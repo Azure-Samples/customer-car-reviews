@@ -6,7 +6,6 @@ export async function run (context: any, req: any) {
     let url = process.env["COSMOS_DB_HOST"];
     let key = process.env["COSMOS_DB_KEY"];
     let coll = await new Collection("car","cardb",url, key).openOrCreateDatabaseAsync();
-//    let allDocs = await coll.queryDocuments().toArray();
     let state = context.bindingData.state;
     if (state === "approved" || state === "pending" || state === "rejected" ) {
     let allDocs = await coll.queryDocuments({
@@ -22,6 +21,5 @@ export async function run (context: any, req: any) {
             body: "Please pass the correct state! State is only allowed ( approved | pending | rejected )"
         };
     }
-
-    // context.done();
+    context.done();
 };
