@@ -12,6 +12,7 @@ This sample showcases the Azure Serverless services, and takes advantage of Azur
 # Running on your Azure Subscription
 
 An ARM template was created so you can deploy the solution to your own subscription. Here is what it creates:
+
 | Azure Service | What is it used for |
 |--------|-------|
 |Blob Storage|Files for the single page application (SPA) for the website; storage queues for communication between Functions; storing car review images uplodaded via the SPA website|
