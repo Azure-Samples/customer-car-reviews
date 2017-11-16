@@ -51,13 +51,13 @@ This will create a new Resource Group and all the services on that resource grou
 
 ![Resource Group View in the Azure Portal](/img/resourcegroup.png)
 
-> Note: This ARM template is pretty powerful - it will have created and configured all the right Application Settings for the three Function Apps, and configured Logic Apps as much as possible. There are two more steps for this sample to work which we'll cover next.
+> Note: This ARM template is pretty powerful - it will have created and configured all the right Application Settings for the three Function Apps, and configured Logic Apps as much as possible. But there are some more steps before we have the sample configured end to end.
 
 > Note: There's a limit of one free Cognitive Service type per subscription. If you have Compute Vision or Content Moderator already you can change the template to use that one, or change the tier to paid. 
 
 ## Authorize Office 365 & Event Grid Connections
 
-The Office 365 API Connection is used to send the notification email for a declined review, and the Event Grid connections is used by Logic Apps to subscribe to the Event Grid topic. They need consent before being used, so log in to the Azure Portal and find your newly created resource group, then:
+The Logic Apps Office 365 API Connection is used to send the notification email for a declined review, and the Event Grid connections is used by Logic Apps to subscribe to the Event Grid topic. They need consent in the Azure Portal before being used, so log in to the Azure Portal, find your newly created resource group, then:
 
 - Find the Office 365 API Connection (it'll end in `office365connection`) and open it, then click on `This connection is not authenticated` and then click on `Authorize` then sign in to your Office 365 account:
 ![Office 365 Connection](/img/office365connection.png)
@@ -70,18 +70,31 @@ The Office 365 API Connection is used to send the notification email for a decli
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
 ## Edit and upload SPA Website Files
-The next step is to build and upload the content of the reviews website to blob storage. The website is an Angular Single Page Application. We will host it on blob storage and exposed via the Proxy function that was created by the ARM template. 
+The next step is to configure our storage account, then build and upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and exposed via the Proxy function that was created by the ARM template. 
 
-Follow the instructions to build the site locally by following the [instructions for the SPA](src/spa/README.md) with the prod configuration.
-
-Now that you have the SPA site configured and compiled locally, we need to upload it to a new container in the storage account that was created by the ARM template. Name the new container `web`. 
-
-To create the container and upload the content via the Azure CLI, in terminal/command line browse to the `spa` folder and run the following:
+Create a `web` and a `out` container in the blob storage account, with the `out` container having Container access level. To create themvia the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
 ```azurecli
 az storage container create -n web --account-name YOUR-STORAGE-ACCOUNT-NAME
-
-
+az storage container create -n out --account-name YOUR-STORAGE-ACCOUNT-NAME --public-access container
 ```
+
+Now follow the instructions to configure and build the site locally by following the [instructions for the SPA](src/spa/README.md) with the prod configuration.
+
+Now that you have the SPA site configured and compiled locally, we need to upload it to a new container in the storage account that was created by the ARM template. 
+
+Upload all the content of the `src/spa/dist` folder to the `web` container in your blog storage account. For example, from the Azure CLI browse to the `src/spa/dist` folder and run the following commands, replacing the value for your storage account name:
+```azurecli
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "application/javascript" --pattern "*.js"
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/css" --pattern "*.css"
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "image/x-icon" --pattern "*.ico"
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/html" --pattern "*.html"
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web/assets --source assets/ --content-type "image/jpg" --pattern "*.jpg"
+```
+
+## CORS
+
+If you upload the Single Page Application, you need to setup Azure Functions with CORS settings. If you run your app via Blob Storage, you can add CORS of your blob domain url. 
+
 
 # TODO:
 Instructions to populate Cosmos DB and Storage with partitions, containers, and initial content

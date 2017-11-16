@@ -5,7 +5,7 @@
       "name": "input",
       "direction": "in",
       "leaseCollectionName": "leases",
-      "connectionStringSetting": "CosmosDbConnectionString",
+      "connectionStringSetting": "carreviewstr_COSMOSDB",
       "databaseName": "cardb",
       "collectionName": "car",
       "createLeaseCollectionIfNotExists": true

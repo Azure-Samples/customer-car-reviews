@@ -18,7 +18,7 @@
     {
       "type": "blob",
       "name": "outputBlob",
-      "path": "outcontainer/{filename}",
+      "path": "out/{filename}",
       "connection": "carreviewstr_STORAGE",
       "direction": "out"
     }

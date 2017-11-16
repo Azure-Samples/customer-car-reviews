@@ -1,6 +1,6 @@
-# CarReviews
+# Car Reviews SPA Instructions
 
-Single page application of Car Review App.
+Here are the instructions on how to configure and build the Single Page Application of Car Review App.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.3.
 
@@ -26,7 +26,7 @@ cd customer-car-reviews/src/spa/src
 npm install
 ```
 
-### Configure enviornment settings
+### Configure environment settings
 
 In this repo, I include two example settings files, `environment.ts.example`, and `environment.prod.ts.example`. Create a copy of one of them, removing `.example`, to the same directory. 
 
@@ -37,9 +37,29 @@ cp enviornment.ts.example environment.ts
 cp environment.prod.ts.example environment.prod.ts 
 ```
 
-On windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
+On Windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
 
-Then edit the values in these files to fit your environment. You will need the  
+Then edit the values in these files to fit your environment. You will need to update the values for the following:
+- fileUploadUrl
+- getCarsUrl
+- createCarUrl
+- imageBlobUrl
+
+You can get the values for fileUploadUrl, getCarsUrl, and createCarUrl from the Azure portal by finding your 'UNIQUE-WORDsitebackend' function app and going into each of those functions then getting the function URL, as shown [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function).
+
+The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
+
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
+
+```
+$ ng b -prod --base-href /web/
+```
+
+Now you can return to the main Readme to continue configuring the sample.
+
+# Optional if you want to test locally 
 
 ## Local Development
 
@@ -58,21 +78,7 @@ $ ng serve --environment prod
 
 > Note: if you run into `Cannot read property 'length' of undefined` error, you might have forgotten to create `enviornment.ts` or `environment.prod.ts`.
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
-
-```
-$ ng b -prod --base-href /web/
-```
-
-## Upload your blob storage
-
-After the `build` step, you can you can find the `dist` directory. You can upload all of these file on the Azure Blob Storage with blog permission.  
-
-## CORS
-
-If you upload the Single Page Application, you need to setup Azure Functions with CORS settings. If you run your app via Blob Storage, you can add CORS of your blob domain url. 
 
 ## Running unit tests
 

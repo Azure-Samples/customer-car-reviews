@@ -21,7 +21,7 @@
       "collectionName": "car",
       "createIfNotExists": false,
       "partitionKey": "/company",
-      "connection": "CosmosDbConnectionString",
+      "connection": "carreviewstr_COSMOSDB",
       "direction": "out"
     },
     {
