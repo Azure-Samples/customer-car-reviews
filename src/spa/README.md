@@ -79,7 +79,6 @@ $ ng serve --environment prod
 > Note: if you run into `Cannot read property 'length' of undefined` error, you might have forgotten to create `enviornment.ts` or `environment.prod.ts`.
 
 
-
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

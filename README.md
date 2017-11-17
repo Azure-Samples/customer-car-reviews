@@ -7,7 +7,7 @@ author: nzthiago
 
 This is a sample application which acts as a Car Review web site. Pictures and text is submitted and then inspected for content to ensure a car has been uploaded. Cars are marked approved while non-cars are marked rejected. Rejected cars get sent to a human reviewer via email for further analysis.
 
-This sample showcases the Azure Serverless services, and takes advantage of Azure Functions, Azure Functions Proxy, Event Grid, Logic Apps, Cognitive Services, Storage Queues and Blobs, and CosmosDB.
+This sample showcases the Azure Serverless services, and takes advantage of Azure Functions, Azure Functions Proxy, Event Grid, Logic Apps, Cognitive Services, Storage Queues and Blobs, and Cosmos DB.
 
 # Running on your Azure Subscription
 
@@ -22,7 +22,7 @@ An ARM template was created so you can deploy the solution to your own subscript
 |Logic App|A Logic App workflow that sends notifications to Microsoft Teams and to an email list to notify that a car review has been rejected by the automated service| 
 |Cognitive Service|Computer Vision cognitive service account for the automated image review|
 |Cognitive Service|Content Moderator cognitive service account for the automated text review|
-|Cosmos DB|CosmosDB with the DocumentDB API to store the JSON documents containing information about a car review|
+|Cosmos DB|Cosmos DB with the DocumentDB API to store the JSON documents containing information about a car review|
 
 ## Configure Proxy File and Deploy the ARM template
 
@@ -83,25 +83,30 @@ Now follow the instructions to configure and build the site locally by following
 
 Now that you have the SPA site configured and compiled locally, we need to upload it to a new container in the storage account that was created by the ARM template. 
 
-Upload all the content of the `src/spa/dist` folder to the `web` container in your blog storage account. For example, from the Azure CLI browse to the `src/spa/dist` folder and run the following commands, replacing the value for your storage account name:
+Upload all the content of the `src/spa/dist` folder to the `web` container in your blob storage account, the content in `src/spa/dist/assets` to `web/assets`, and also from `src/spa/dist/assets` to the `out` container. For example, from the Azure CLI browse to the `src/spa/dist` folder and run the following commands, replacing the value for your storage account name:
 ```azurecli
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "application/javascript" --pattern "*.js"
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/css" --pattern "*.css"
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "image/x-icon" --pattern "*.ico"
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/html" --pattern "*.html"
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web/assets --source assets/ --content-type "image/jpg" --pattern "*.jpg"
+az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination out --source assets/ --content-type "image/jpg" --pattern "*.jpg"
 ```
 
-## CORS
+# Create Cosmos DB Collection and upload Documents
 
-If you upload the Single Page Application, you need to setup Azure Functions with CORS settings. If you run your app via Blob Storage, you can add CORS of your blob domain url. 
+The `cardb` database should have been aready created for you (by Azure Functions when it first deployed). Now let's create the collection to be used by the sample. Create a new `car` collection with `/name` as the partition key path in the `cardb` database inside your Cosmos DB account. For example, from the Azure CLI run the following commands, replacing the value for your Cosmos DB account name and resource group:
+```azurecli
+az cosmosdb collection  create --collection-name car --partition-key-path '/name' --db-name cardb --name YOUR-COSMOS-DB-ACCT --resource-group-name YOUR-RESOURCE-GROUP
+```
 
+Now let's upload the initial documents to this collection. They will reflect the database entries for the sample images we uploaded to blob storage with the website.
+Upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. You can use Data Explorer in the portal, or other tools.
 
 # TODO:
-Instructions to populate Cosmos DB and Storage with partitions, containers, and initial content
 Overview of final architecture (from slides)
 Update slides with new architecture diagram if any
-Test instructions end to end 
+Test instructions end to end
 
 # Session Slides
 

@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  fileUploadUrl: "https://nzthicar2sitebackend.azurewebsites.net/api/FileUpload/{filename}?code=MaIlgEr6lD4w/zgzsK1DWIDGphHuuO2DOGhaiGkd/N18vdk3ZeShjw==",
-  getCarsUrl: "https://nzthicar2sitebackend.azurewebsites.net/api/GetCars/{state:alpha}?code=aact/hGjSZIG1wRxbtWCQfFdRgxucawiwEWaKcZzuFNG/SymVZvj9A==",
-  createCarUrl: "https://nzthicar2sitebackend.azurewebsites.net/api/CreateCar?code=35LJIW7QL2dJ7i3WGCtvdffdPYdjj2syR07Xp0dn8xeEzHeYEqaIPQ==",
-  imageBlobUrl: "https://nzthicar2stor.blob.core.windows.net/out/",
+  fileUploadUrl: "https://nzthicarsitebackend.azurewebsites.net/api/FileUpload/{filename}?code=Q95fvfmzUgePpFawtA8Ayj5l2bdeeKsAWYmSdx/O40xqkO76nU3UQg==",
+  getCarsUrl: "https://nzthicarsitebackend.azurewebsites.net/api/GetCars/{state:alpha}?code=SAut9vVgqzefqVjmmDUWL5J0L5zZabKaa6PrFeGbppraawFzc8jqwA==",
+  createCarUrl: "https://nzthicarsitebackend.azurewebsites.net/api/CreateCar?code=2R5FnRlflfPZaglTbQUfbAVboLpdCnrgFeaW8zpm06/qe483dlP7YA==",
+  imageBlobUrl: "https://nzthicarstor.blob.core.windows.net/out/",
 };

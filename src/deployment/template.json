@@ -358,7 +358,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(variables('functionAppPlanName'))]"
+                            "value": "[toLower(concat(parameters('unique_name'),'siteproxy'))]"
                         },
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -373,25 +373,14 @@
                             "value": "src/proxyfunctionapp"
                         }
                     ]
+                },
+                "files": {
+                    "proxies.json": "[concat('{\r\n\"$schema\": \"http://json.schemastore.org/proxies\",\r\n\"proxies\": {\r\n\"webindex\r\n\": {\r\n\"matchCondition\": {\r\n\"route\r\n\": \"/\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/index.html\"\r\n},\r\n\"web\": {\r\n\"matchCondition\": {\r\n\"route\": \"/{*url}\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/{url}\"\r\n},\r\n\"Dashboard\": {\r\n\"matchCondition\": {\r\n\"route\": \"/dashboard\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/index.html\"\r\n}\r\n}\r\n}')]"
                 }
             },
-            "resources": [
-                {
-                    "apiVersion": "2015-08-01",
-                    "name": "web",
-                    "type": "sourcecontrols",
-                    "dependsOn": [
-                      "[concat(parameters('unique_name'),'siteproxy')]"
-                    ],
-                    "properties": {
-                      "RepoUrl": "https://github.com/Azure-Samples/customer-car-reviews",
-                      "branch": "master",
-                      "IsManualIntegration": true
-                    }
-               }
-            ],
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
             ]
         },
         {
@@ -403,7 +392,13 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
-                "siteConfig": {
+                "cors": {
+                    "allowedOrigins": [
+                      "[concat('https://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]",
+                      "[concat('http://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]"
+                    ]
+                  },
+                  "siteConfig": {
                     "appSettings": [
                         {
                             "name": "AzureWebJobsDashboard",
@@ -435,7 +430,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(variables('functionAppPlanName'))]"
+                            "value": "[toLower(concat(parameters('unique_name'),'sitebackend'))]"
                         },
                         {
                             "name": "AzureWebJobsSecretStorageType",
@@ -465,7 +460,8 @@
             ],
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]",
-                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]"
+                "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
             ]
         },
         {
@@ -497,7 +493,7 @@
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(variables('functionAppPlanName'))]"
+                            "value": "[toLower(concat(parameters('unique_name'),'reviewsvc'))]"
                         },
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -564,7 +560,10 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms', variables('FunctionAppPlanName'))]",
                 "[resourceId('Microsoft.DocumentDb/databaseAccounts', variables('CosmosDBName'))]",
-                "[resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))]"
+                "[resourceId('Microsoft.EventGrid/topics', variables('EventGridTopicName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]",
+                "[resourceId('Microsoft.CognitiveServices/accounts', variables('ComputerVisionName'))]",
+                "[resourceId('Microsoft.CognitiveServices/accounts', variables('ContentModeratorName'))]"
             ]
         }
     ]
