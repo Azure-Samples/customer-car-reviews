@@ -51,10 +51,10 @@ The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windo
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
+Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/` so  build your app like this:
 
 ```
-$ ng b -prod --base-href /web/
+$ ng b -prod --base-href /
 ```
 
 Now you can return to the main Readme to continue configuring the sample.

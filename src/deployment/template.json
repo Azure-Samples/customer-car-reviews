@@ -373,9 +373,6 @@
                             "value": "src/proxyfunctionapp"
                         }
                     ]
-                },
-                "files": {
-                    "proxies.json": "[concat('{\r\n\"$schema\": \"http://json.schemastore.org/proxies\",\r\n\"proxies\": {\r\n\"webindex\r\n\": {\r\n\"matchCondition\": {\r\n\"route\r\n\": \"/\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/index.html\"\r\n},\r\n\"web\": {\r\n\"matchCondition\": {\r\n\"route\": \"/{*url}\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/{url}\"\r\n},\r\n\"Dashboard\": {\r\n\"matchCondition\": {\r\n\"route\": \"/dashboard\"\r\n},\r\n\"backendUri\": \"https://', parameters('unique_name'), 'stor.blob.core.windows.net/web/index.html\"\r\n}\r\n}\r\n}')]"
                 }
             },
             "dependsOn": [
@@ -392,13 +389,13 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
-                "cors": {
-                    "allowedOrigins": [
-                      "[concat('https://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]",
-                      "[concat('http://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]"
-                    ]
-                  },
                   "siteConfig": {
+                    "cors": {
+                        "allowedOrigins": [
+                          "[concat('https://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]",
+                          "[concat('http://', parameters('unique_name'),'siteproxy', '.azurewebsites.net')]"
+                        ]
+                    },
                     "appSettings": [
                         {
                             "name": "AzureWebJobsDashboard",
@@ -414,7 +411,7 @@
                         },
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "6.5.0"
+                            "value": "8.5.0"
                         },
                         {
                             "name": "carreviewstr_COSMOSDB",

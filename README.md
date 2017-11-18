@@ -29,10 +29,7 @@ An ARM template was created so you can deploy the solution to your own subscript
 ### Unique word as the base of your project
 The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's pretty short and doesn't have any special characters.
 
-Have you thoguht of that short unique word? Great, now let's continue.
-
-### Edit Azure Function Proxy 
-Now edit the file `proxies.json` in the `src/proxyfunctionapp` folder and replace `YOURUNIQUEWORD` with that unique word.
+Have you thought of that short unique word? Great, now let's continue.
 
 ### Edit ARM Template Parameters and Deploy
 Next, deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or override the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). Make sure to choose `West Central US` or `West US 2` as these are the regions currently supported by Event Grid at the time of writing.  
@@ -45,16 +42,16 @@ az account set --subscription YOUR-SUBSCRIPTION-NAME-OR-ID
 
 az group create --name YOUR-RESOURCE-GROUP-NAME --location westcentralus
 
-az group deployment create --name nzthicarreviewdeployment --resource-group YOUR-RESOURCE-GROUP-NAME --parameters unique_name=YOUR-SHORT-UNIQUE-WORD notification_emails=YOUR-EMAIL-LIST  --template-file template.json
+az group deployment create --name nzthicarreviewdeployment --resource-group YOUR-RESOURCE-GROUP-NAME --parameters unique_name=YOUR-SHORT-UNIQUE-WORD notification_emails=YOUR-EMAIL-LIST --template-file template.json
 ```
 
-This will create a new Resource Group and all the services on that resource group. Once finished it should look like this in the [Azure Portal](https://portal.azure.com):
+This will create a new Resource Group and all the services used by our sample in that resource group. Once finished it should look like this in the [Azure Portal](https://portal.azure.com):
 
 ![Resource Group View in the Azure Portal](/img/resourcegroup.png)
 
 > Note: This ARM template is pretty powerful - it will have created and configured all the right Application Settings for the three Function Apps, and configured Logic Apps as much as possible. But there are some more steps before we have the sample configured end to end.
 
-> Note: There's a limit of one free Cognitive Service type per subscription. If you have Compute Vision or Content Moderator already you can change the template to use that one, or change the tier to paid. 
+> Note: There's a limit of one free Cognitive Service type per subscription. If you already have Compute Vision or Content Moderator in your subscription you can change update the ARM template to use that one, or change the tier of the ones being created by the templated to a paid tier. 
 
 ## Authorize Office 365 & Event Grid Connections
 
@@ -70,28 +67,87 @@ The Logic Apps Office 365 API Connection is used to send the notification email 
 ![Event Grid Connection](/img/eventgridconnection.png)
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
-## Edit and upload SPA Website Files
-The next step is to configure our storage account, then build and upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and exposed via the Proxy function that was created by the ARM template. 
+## Build SPA Website
 
-Create a `web` and a `out` container in the blob storage account, with the `out` container having Container access level. To create themvia the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
+### restore npm
+
+Browse to the `src/spa` folder and restore the npm packages:
 ```azurecli
-az storage container create -n web --account-name YOUR-STORAGE-ACCOUNT-NAME
+npm install
+```
+
+### Configure environment settings
+
+In this repo, I include two example settings files, `environment.ts.example`, and `environment.prod.ts.example`. Create a copy of one of them, removing `.example`, to the same directory. 
+
+In case of Mac, for example:
+```azurecli
+cd environments
+cp enviornment.ts.example environment.ts  
+cp environment.prod.ts.example environment.prod.ts 
+```
+
+On Windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
+
+Then edit the values in these files to fit your environment for the three functions in the sitebackend function app. You will need to update the values for the following:
+- fileUploadUrl
+- getCarsUrl
+- createCarUrl
+- imageBlobUrl
+
+You can get the values for fileUploadUrl, getCarsUrl, and createCarUrl from the Azure portal by finding your 'UNIQUE-WORDsitebackend' function app and going into each of those functions then getting the function URL, as shown [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function).
+
+Also note that the URL for getCars should include {state} and not {state:alpha}
+
+The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
+
+### Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
+
+```
+$ ng b -prod --base-href /
+```
+
+## Create Containers and Upload SPA Website Files
+The next step is to configure our storage account, then upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and expose it via the Proxy function that was created by the ARM template. 
+
+Create a `web` and a `out` container in the blob storage account, with both containers having Container public access level. To create them via the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
+```azurecli
+az storage container create -n web --account-name YOUR-STORAGE-ACCOUNT-NAME --public-access container
+
 az storage container create -n out --account-name YOUR-STORAGE-ACCOUNT-NAME --public-access container
 ```
 
-Now follow the instructions to configure and build the site locally by following the [instructions for the SPA](src/spa/README.md) with the prod configuration.
+Now we will to upload the site files to the storage containers.
 
-Now that you have the SPA site configured and compiled locally, we need to upload it to a new container in the storage account that was created by the ARM template. 
-
-Upload all the content of the `src/spa/dist` folder to the `web` container in your blob storage account, the content in `src/spa/dist/assets` to `web/assets`, and also from `src/spa/dist/assets` to the `out` container. For example, from the Azure CLI browse to the `src/spa/dist` folder and run the following commands, replacing the value for your storage account name:
+Upload all the content of the `src/spa/dist` folder to the `web` container in your blob storage account; upload the content in `src/spa/dist/assets` to `web/assets`; and also upload the content from `src/spa/dist/assets` to the `out` container. For example, from the Azure CLI browse to the `src/spa/dist` folder and run the following commands, replacing the value of your storage account name:
 ```azurecli
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "application/javascript" --pattern "*.js"
+
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/css" --pattern "*.css"
+
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "image/x-icon" --pattern "*.ico"
+
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web --source . --content-type "text/html" --pattern "*.html"
+
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination web/assets --source assets/ --content-type "image/jpg" --pattern "*.jpg"
+
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination out --source assets/ --content-type "image/jpg" --pattern "*.jpg"
 ```
+
+# Configure the Proxy Function App
+
+Right now your Proxy Function App is empty, it doesn't have any proxies configured. Create three proxies in it with the following values, but replace YOUR-STORAGE-ACCOUNT-NAME with your storage account name:
+
+| Name | Match Condition | Backend URI |
+|--------|-------|-------|
+|webindex|/|https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/web/index.html|
+|web|/{*url}|https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/web/{url}|
+|Dashboard|/dashboard|https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/web/index.html|
+
+Here's a view of the Azure Portal with the proxy function selected and the three proxies configured, with the `web` one selected:
+![Proxy](/img/proxy.png)
 
 # Create Cosmos DB Collection and upload Documents
 
@@ -101,7 +157,9 @@ az cosmosdb collection  create --collection-name car --partition-key-path '/name
 ```
 
 Now let's upload the initial documents to this collection. They will reflect the database entries for the sample images we uploaded to blob storage with the website.
-Upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. You can use Data Explorer in the portal, or other tools.
+Upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. You can use the `Upload` tool in Data Explorer in the Cosmos DB panel in the Azure Portal for example. You should end up with five entries based on the content of those five fiels. Here's a view from the Document Explorer option in the Cosmos DB panel in the Azure Portal with the first one selected:
+![Documents in Cosmos DB](/img/documents.png)
+
 
 # TODO:
 Overview of final architecture (from slides)
@@ -126,4 +184,4 @@ The communication between functions could have been done using Event Grid instea
 [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable-functions-overview) is a feature currently in preview that lets you define stateful workflows between functions. It only supports C# at the moment. Are you up to the challenge to rewrite the Functions in the reviews service to C# and creating a durable function to coordinate them all via the Function Chaining or the Fan-out/fan-in patterns?
 
 ## Challenge 4: Telemetry
-Azure App Insights and Azure Log Analytics can be used to monitor Azure Functions and Azure Logic Apps. Investigate how you can enable it for the functions and logic apps to gather telemetry about your solution. Create custom entries for your telemetry too!
+Azure App Insights and Azure Log Analytics can be used to [monitor Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring) and to monitor [Azure Logic Apps](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-monitor-your-logic-apps-oms). Investigate how you can enable it for the functions and logic apps to gather telemetry about your solution. Create custom entries for your telemetry too!
