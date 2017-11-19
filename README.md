@@ -9,32 +9,31 @@ This is a sample application which acts as a Car Review web site. Pictures and t
 
 This sample showcases the Azure Serverless services, and takes advantage of Azure Functions, Azure Functions Proxy, Event Grid, Logic Apps, Cognitive Services, Storage Queues and Blobs, and Cosmos DB.
 
-# Running on your Azure Subscription
+# Deploying to your Azure Subscription
+An ARM template is in this repo that creates all the Azure services for the solution. Here is what it creates:
 
-An ARM template was created so you can deploy the solution to your own subscription. Here is what it creates:
 
 | Azure Service | What is it used for |
 |--------|-------|
 |Blob Storage|Files for the single page application (SPA) for the website; storage queues for communication between Functions; storing car review images uplodaded via the SPA website|
 |Function App|Functions Proxy to service the SPA website|
 |Function App|Functions for the website backend (upload image, submit review)|
-|Function App|Functions that act as the automated review service (change feed function, check review text, check review image)|
-|Logic App|A Logic App workflow that sends notifications to Microsoft Teams and to an email list to notify that a car review has been rejected by the automated service| 
+|Function App|Functions for the automated review service (change feed function, check review text, check review image)|
+|Logic App|A Logic App workflow that sends notifications to an email list about a rejected car review| 
 |Cognitive Service|Computer Vision cognitive service account for the automated image review|
 |Cognitive Service|Content Moderator cognitive service account for the automated text review|
 |Cosmos DB|Cosmos DB with the DocumentDB API to store the JSON documents containing information about a car review|
 
-## Configure Proxy File and Deploy the ARM template
 
-### Unique word as the base of your project
-The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's pretty short and doesn't have any special characters.
+## Unique word as the base of your project
+The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's short and doesn't have any special characters.
 
 Have you thought of that short unique word? Great, now let's continue.
 
-### Edit ARM Template Parameters and Deploy
-Next, deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or override the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). Make sure to choose `West Central US` or `West US 2` as these are the regions currently supported by Event Grid at the time of writing.  
+## Edit ARM Template Parameters and Deploy
+Next, deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or override the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). At the time of writing, Event Grid is only supported in `West Central US` or `West US 2`, so choose one of these regions as the location.  
 
-For example, using the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) you can run the following commands (replace the placeholder values for subscription, group, unique word, and email):
+For example, using the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) you can run the following commands from the `src/deployment` folder (replace the placeholder values for subscription, group, unique word, and email):
 ```azurecli
 az login
 
@@ -49,7 +48,7 @@ This will create a new Resource Group and all the services used by our sample in
 
 ![Resource Group View in the Azure Portal](/img/resourcegroup.png)
 
-> Note: This ARM template is pretty powerful - it will have created and configured all the right Application Settings for the three Function Apps, and configured Logic Apps as much as possible. But there are some more steps before we have the sample configured end to end.
+> Note: This ARM template is pretty powerful - it will have created and configured all the right Application Settings for the backend and review service Function Apps, and configured Logic Apps as much as possible. But there are some more steps before we have the sample configured end to end.
 
 > Note: There's a limit of one free Cognitive Service type per subscription. If you already have Compute Vision or Content Moderator in your subscription you can change update the ARM template to use that one, or change the tier of the ones being created by the templated to a paid tier. 
 
@@ -57,13 +56,13 @@ This will create a new Resource Group and all the services used by our sample in
 
 The Logic Apps Office 365 API Connection is used to send the notification email for a declined review, and the Event Grid connections is used by Logic Apps to subscribe to the Event Grid topic. They need consent in the Azure Portal before being used, so log in to the Azure Portal, find your newly created resource group, then:
 
-- Find the Office 365 API Connection (it'll end in `office365connection`) and open it, then click on `This connection is not authenticated` and then click on `Authorize` then sign in to your Office 365 account:
+- Find the Office 365 API Connection (it'll end in `office365connection`), open it, then click on `This connection is not authenticated` and then click on `Authorize` then sign in to your Office 365 account to authenticate, then click save:
 ![Office 365 Connection](/img/office365connection.png)
 ![Office 365 Connection Authorization](/img/office365authorize.png)
 
 > Note: this sample relies on Office 365 to send the email. You can edit the Logic App and change it to Gmail or other email services if needed.
 
-- Find the Event Grid API Connection (it'll end in `eventgridconnection`) and open it, then click on `This connection is not authenticated`:
+- Find the Event Grid API Connection (it'll end in `eventgridconnection`), and do the same:
 ![Event Grid Connection](/img/eventgridconnection.png)
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
@@ -97,20 +96,20 @@ Then edit the values in these files to fit your environment for the three functi
 
 You can get the values for fileUploadUrl, getCarsUrl, and createCarUrl from the Azure portal by finding your 'UNIQUE-WORDsitebackend' function app and going into each of those functions then getting the function URL, as shown [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function).
 
-Also note that the URL for getCars should include {state} and not {state:alpha}
+Also note that the URL for getCars should include `{state}` and not `{state:alpha}`
 
 The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
 
 ### Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/web/` so  build your app like this:
+Now let's use Angular to build the project (install Angular first if you don't have it). The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/` so  build your app like this:
 
-```
-$ ng b -prod --base-href /
+```azurecli
+ng b -prod --base-href /
 ```
 
 ## Create Containers and Upload SPA Website Files
-The next step is to configure our storage account, then upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and expose it via the Proxy function that was created by the ARM template. 
+The next step is to configure the storage account, then upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and expose it via the Proxy function that was created by the ARM template. 
 
 Create a `web` and a `out` container in the blob storage account, with both containers having Container public access level. To create them via the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
 ```azurecli
@@ -136,7 +135,7 @@ az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destinat
 az storage blob upload-batch --account-name YOUR-STORAGE-ACCOUNT-NAME --destination out --source assets/ --content-type "image/jpg" --pattern "*.jpg"
 ```
 
-# Configure the Proxy Function App
+## Configure the Proxy Function App
 
 Right now your Proxy Function App is empty, it doesn't have any proxies configured. Create three proxies in it with the following values, but replace YOUR-STORAGE-ACCOUNT-NAME with your storage account name:
 
@@ -149,22 +148,25 @@ Right now your Proxy Function App is empty, it doesn't have any proxies configur
 Here's a view of the Azure Portal with the proxy function selected and the three proxies configured, with the `web` one selected:
 ![Proxy](/img/proxy.png)
 
-# Create Cosmos DB Collection and upload Documents
+## Create Cosmos DB Collection and upload Documents
 
-The `cardb` database should have been aready created for you (by Azure Functions when it first deployed). Now let's create the collection to be used by the sample. Create a new `car` collection with `/name` as the partition key path in the `cardb` database inside your Cosmos DB account. For example, from the Azure CLI run the following commands, replacing the value for your Cosmos DB account name and resource group:
+Now create a database called `cardb` in your Cosmos DB account with the SQL (DocumentDB API). Then create a new `car` collection with `/name` as the partition key path in the `cardb` database. For example, from the Azure CLI run the following commands, replacing the value for your Cosmos DB account name and resource group:
 ```azurecli
+az cosmosdb database  create --db-name cardb --name YOUR-COSMOS-DB-ACCT --resource-group-name YOUR-RESOURCE-GROUP
+
 az cosmosdb collection  create --collection-name car --partition-key-path '/name' --db-name cardb --name YOUR-COSMOS-DB-ACCT --resource-group-name YOUR-RESOURCE-GROUP
 ```
 
-Now let's upload the initial documents to this collection. They will reflect the database entries for the sample images we uploaded to blob storage with the website.
-Upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. You can use the `Upload` tool in Data Explorer in the Cosmos DB panel in the Azure Portal for example. You should end up with five entries based on the content of those five fiels. Here's a view from the Document Explorer option in the Cosmos DB panel in the Azure Portal with the first one selected:
+Now upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. They will reflect the database entries for the sample images we uploaded to blob storage with the website. 
+
+You can use the `Upload` tool in Data Explorer in the Cosmos DB panel in the Azure Portal for example. You should end up with five entries based on the content of those five fiels. Here's a view from the Document Explorer option in the Cosmos DB panel in the Azure Portal with the first one selected:
 ![Documents in Cosmos DB](/img/documents.png)
 
 
 # TODO:
-Overview of final architecture (from slides)
+Overview of final architecture (from slides), and video of demo at the beginning of the readme
 Update slides with new architecture diagram if any
-Test instructions end to end
+Add instructions on browsing to the website after the cosmosdb bit 
 
 # Session Slides
 
