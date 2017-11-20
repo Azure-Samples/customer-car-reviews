@@ -12,7 +12,6 @@ This sample showcases the Azure Serverless services, and takes advantage of Azur
 # Deploying to your Azure Subscription
 An ARM template is in this repo that creates all the Azure services for the solution. Here is what it creates:
 
-
 | Azure Service | What is it used for |
 |--------|-------|
 |Blob Storage|Files for the single page application (SPA) for the website; storage queues for communication between Functions; storing car review images uplodaded via the SPA website|
@@ -23,7 +22,6 @@ An ARM template is in this repo that creates all the Azure services for the solu
 |Cognitive Service|Computer Vision cognitive service account for the automated image review|
 |Cognitive Service|Content Moderator cognitive service account for the automated text review|
 |Cosmos DB|Cosmos DB with the DocumentDB API to store the JSON documents containing information about a car review|
-
 
 ## Unique word as the base of your project
 The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's short and doesn't have any special characters.
@@ -67,6 +65,7 @@ The Logic Apps Office 365 API Connection is used to send the notification email 
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
 ## Build SPA Website
+Now let's configure and build the web application for the sample.
 
 ### restore npm
 
@@ -77,7 +76,7 @@ npm install
 
 ### Configure environment settings
 
-In this repo, I include two example settings files, `environment.ts.example`, and `environment.prod.ts.example`. Create a copy of one of them, removing `.example`, to the same directory. 
+In `src/spa/src/environments` you will find two example settings files, `environment.ts.example`, and `environment.prod.ts.example`. Create a copy of one of them, removing `.example`, to the same directory. 
 
 In case of Mac, for example:
 ```azurecli
@@ -86,9 +85,9 @@ cp enviornment.ts.example environment.ts
 cp environment.prod.ts.example environment.prod.ts 
 ```
 
-On Windows, you can use explore to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
+On Windows, you can use explorer to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
 
-Then edit the values in these files to fit your environment for the three functions in the sitebackend function app. You will need to update the values for the following:
+For deploying to your Azue subscription edit the values in `environemnt.prod.ts` with the right URLs for the three functions and the storage account from the deployment. That is, you will need to update the values for the following:
 - fileUploadUrl
 - getCarsUrl
 - createCarUrl
@@ -96,7 +95,7 @@ Then edit the values in these files to fit your environment for the three functi
 
 You can get the values for fileUploadUrl, getCarsUrl, and createCarUrl from the Azure portal by finding your 'UNIQUE-WORDsitebackend' function app and going into each of those functions then getting the function URL, as shown [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function).
 
-Also note that the URL for getCars should include `{state}` and not `{state:alpha}`
+Also note that the URL for getCars should contain `{state}` and not `{state:alpha}`
 
 The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
 
