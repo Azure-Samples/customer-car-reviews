@@ -436,6 +436,10 @@
                         { 
                             "name": "Project", 
                             "value": "src/spabackendfunctionapp"
+                        },
+                        {
+                            "name": "SCM_SCRIPT_GENERATOR_ARGS",
+                            "value": "-r \"D:\\home\\site\\repository\" -o \"D:\\home\\site\\deployments\\tools\" --functionApp --sitePath \"D:\\home\\site\\repository\\src\\spabackendfunctionapp\""
                         }
                     ]
                 }
