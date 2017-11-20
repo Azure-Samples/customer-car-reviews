@@ -3,7 +3,7 @@
     "description": "My weekend driver",
     "id": "ba1b759c-d5b7-468f-bc5a-830fac19b878",
     "imageApproval": "complete",
-    "image_url": "https://nzthicarstor.blob.core.windows.net/out/rx.jpg",
+    "image_url": "https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/out/rx.jpg",
     "name": "Bella",
     "state": "approved",
     "textApproval": "complete"

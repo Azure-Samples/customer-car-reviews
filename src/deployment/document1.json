@@ -3,7 +3,7 @@
     "description": "Great racing car!",
     "id": "5d11fa58-f4a7-4fa3-bacb-5b0b90ff6f6f",
     "imageApproval": "complete",
-    "image_url": "https://nzthicarstor.blob.core.windows.net/out/86.jpg",
+    "image_url": "https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/out/86.jpg",
     "name": "Steve",
     "state": "approved",
     "textApproval": "complete"

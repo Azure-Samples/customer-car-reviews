@@ -510,7 +510,7 @@
                         },
                         {
                             "name": "ContentModeratorApiUrl",
-                            "value": "[reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')), '2016-02-01-preview').endpoint]"
+                            "value": "[concat(reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')), '2016-02-01-preview').endpoint, '/v1.0/ProcessText/Screen/')]"
                         },
                         {
                             "name": "ContentModeratorApiKey",
@@ -518,7 +518,7 @@
                         },
                         {
                             "name": "VisionApiUrl",
-                            "value": "[reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ComputerVisionName')), '2016-02-01-preview').endpoint]"
+                            "value": "[concat(reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ComputerVisionName')), '2016-02-01-preview').endpoint, '/analyze')]"
                         },
                         {
                             "name": "VisionApiKey",

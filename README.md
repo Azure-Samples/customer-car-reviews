@@ -95,13 +95,13 @@ For deploying to your Azue subscription edit the values in `environemnt.prod.ts`
 
 You can get the values for fileUploadUrl, getCarsUrl, and createCarUrl from the Azure portal by finding your 'UNIQUE-WORDsitebackend' function app and going into each of those functions then getting the function URL, as shown [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function).
 
-Also note that the URL for getCars should contain `{state}` and not `{state:alpha}`
+Also note that the URL for getCars will have `{state:alpha}` in it and you must change it to just `{state}`.
 
-The value for imageBlobUrl will be: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
+Change the value for imageBlobUrl will to the following, replacing the value for YOUR-STORAGE-ACCOUNT: https://YOUR-STORAGE-ACCOUNT.blob.core.windows.net/out/
 
 ### Build
 
-Now let's use Angular to build the project (install Angular first if you don't have it). The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/` so  build your app like this:
+Now let's use the Angular CLI to build the project ([install Angular](https://github.com/angular/angular-cli#installation) first if you don't have it). The build artifacts will be stored in the `dist` directory. Use the `-prod` flag for a production build before uploading to Azure. The blob storage and proxy base href is `/` so  build your app like this:
 
 ```azurecli
 ng b -prod --base-href /
@@ -156,16 +156,17 @@ az cosmosdb database  create --db-name cardb --name YOUR-COSMOS-DB-ACCT --resour
 az cosmosdb collection  create --collection-name car --partition-key-path '/name' --db-name cardb --name YOUR-COSMOS-DB-ACCT --resource-group-name YOUR-RESOURCE-GROUP
 ```
 
-Now upload the five `document*.json` files in the `src/deployment` folder to the new `car` collection in your database. They will reflect the database entries for the sample images we uploaded to blob storage with the website. 
+There are five JSON files called `document{NUMBER}.json` in the `src/deployment` folder. Edit each of those files to replace `YOUR-STORAGE-ACCOUNT-NAME` with your new storage account name.
 
-You can use the `Upload` tool in Data Explorer in the Cosmos DB panel in the Azure Portal for example. You should end up with five entries based on the content of those five fiels. Here's a view from the Document Explorer option in the Cosmos DB panel in the Azure Portal with the first one selected:
+Then upload those five files to the new `car` collection in your Cosmos DB database. These will be the database entries for the sample images we uploaded to blob storage with the website. 
+
+You can use the `Upload` tool in Data Explorer from the Cosmos DB panel in the Azure Portal for example. You should end up with five entries based on the content of those five files. Here's a view from the Document Explorer option in the Cosmos DB panel in the Azure Portal with the first one selected:
 ![Documents in Cosmos DB](/img/documents.png)
 
+## Try it out!
 
-# TODO:
-Overview of final architecture (from slides), and video of demo at the beginning of the readme
-Update slides with new architecture diagram if any
-Add instructions on browsing to the website after the cosmosdb bit 
+Now that you have the sample configured end to end, you can browse to it by going to the URL of the proxy function. When you browse to it, it should look like the following:
+![Sample site](/img/site.png)
 
 # Session Slides
 

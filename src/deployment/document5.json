@@ -3,7 +3,7 @@
     "description": "Don’t need a car when you have coffee",
     "id": "de6b716e-d8e4-4a50-9b34-9631a594aa2b",
     "imageApproval": "complete",
-    "image_url": "https://nzthicarstor.blob.core.windows.net/out/coffee.jpg",
+    "image_url": "https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/out/coffee.jpg",
     "name": "Thiago",
     "state": "rejected",
     "textApproval": "complete"

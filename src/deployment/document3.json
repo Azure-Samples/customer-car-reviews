@@ -3,7 +3,7 @@
     "description": "Bet I’ll win some races with this!",
     "id": "4b950bbe-8de4-40ea-847a-0fa9769929dd",
     "imageApproval": "complete",
-    "image_url": "https://nzthicarstor.blob.core.windows.net/out/imprezza.jpg",
+    "image_url": "https://YOUR-STORAGE-ACCOUNT-NAME.blob.core.windows.net/out/imprezza.jpg",
     "name": "Karla",
     "state": "approved",
     "textApproval": "complete"
