@@ -64,6 +64,9 @@ The Logic Apps Office 365 API Connection is used to send the notification email 
 ![Event Grid Connection](/img/eventgridconnection.png)
 ![Event Grid Connection Authorization](/img/eventgridauthorize.png)
 
+Finally, open the Logic App from the Azure Portal (the logic app name will end in `handlerejectedreviewlogic`) and `Disable` it then `Enable` the Logic App from the Overview panel. This will make the Logic App subscribe to Event Grid properly now that you've authenticated the Event Grid API connection. You should see a `Succeeded` status in your trigger history if you refresh the overview panel now:
+![Logic App Trigger Enabled](/img/logicappenabled.png)
+
 ## Build SPA Website
 Now let's configure and build the web application for the sample.
 
