@@ -39,7 +39,7 @@
         {
             "type": "Microsoft.CognitiveServices/accounts",
             "sku": {
-                "name": "S0"
+                "name": "F0"
             },
             "kind": "ContentModerator",
             "name": "[variables('ContentModeratorName')]",
@@ -144,7 +144,9 @@
                                             "id": "@{body('Parse_JSON')?['id']}",
                                             "image_url": "@{body('Parse_JSON')?['image_url']}",
                                             "name": "@{body('Parse_JSON')?['name']}",
-                                            "state": "approved"
+                                            "state": "approved",
+                                            "textApproval": "complete",
+                                            "imageApproval": "complete"
                                         },
                                         "headers": {
                                             "x-ms-documentdb-is-upsert": true,
@@ -175,6 +177,9 @@
                                                 "id": {
                                                     "type": "string"
                                                 },
+                                                "imageApproval": {
+                                                    "type": "string"
+                                                },
                                                 "image_url": {
                                                     "type": "string"
                                                 },
@@ -185,6 +190,9 @@
                                                     "type": "string"
                                                 },
                                                 "state": {
+                                                    "type": "string"
+                                                },
+                                                "textApproval": {
                                                     "type": "string"
                                                 }
                                             },
@@ -231,14 +239,17 @@
                         "value": {
                             "azureeventgrid": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('EventGridConnectionName'))]",
+                                "connectionName": "[variables('EventGridConnectionName')]",
                                 "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azureeventgrid')]"
                             },
                             "documentdb": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('CosmosDBConnectionName'))]",
+                                "connectionName": "[variables('CosmosDBConnectionName')]",
                                 "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/documentdb')]"
                             },
                             "office365": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('Office365ConnectionName'))]",
+                                "connectionName": "[variables('Office365ConnectionName')]",
                                 "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/office365')]"
                             }
                         }
@@ -510,7 +521,7 @@
                         },
                         {
                             "name": "ContentModeratorApiUrl",
-                            "value": "[concat(reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')), '2016-02-01-preview').endpoint, '/v1.0/ProcessText/Screen/')]"
+                            "value": "[concat(reference(concat(resourceGroup().id,'/providers/','Microsoft.CognitiveServices/accounts/', variables('ContentModeratorName')), '2016-02-01-preview').endpoint, '/moderate/v1.0/ProcessText/Screen')]"
                         },
                         {
                             "name": "ContentModeratorApiKey",

@@ -7,9 +7,10 @@ module.exports = function (context, req) {
         req.body.description && req.body.image_url && req.body.state) {
 
         var outDoc = req.body;
-        outDoc.id = uuidv4(),
-        outDoc.textApproval = "pending",
-        outDoc.imageApproval = "pending"
+        outDoc.id = uuidv4();
+        outDoc.textApproval = "pending";
+        outDoc.imageApproval = "pending";
+        outDoc.name = req.body.name.trim();
         context.bindings.outputDocument = outDoc;
         context.res = {
             // status: 200, /* Defaults to 200 */
