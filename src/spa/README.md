@@ -2,7 +2,7 @@
 
 Here are the instructions on how to configure and build the Single Page Application of Car Review App.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.3.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.3. However, upgraded to 1.5.4.
 
 [Demo site](https://carreviewstr.blob.core.windows.net/web/index.html)
 
