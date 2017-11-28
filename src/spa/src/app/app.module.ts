@@ -6,8 +6,6 @@ import { HttpModule } from '@angular/http';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ImageUploadModule } from 'angular2-image-upload';
-
 import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -27,8 +25,7 @@ import { DashboardComponent } from './dashboard.component';
     HttpModule,
     MaterialModule,
     BrowserAnimationsModule,
-    AppRoutingModule,
-    ImageUploadModule.forRoot(),
+    AppRoutingModule
   ],
   entryComponents: [
     ConfirmDialog
