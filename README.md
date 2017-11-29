@@ -84,7 +84,7 @@ In `src/spa/src/environments` you will find two example settings files, `environ
 In case of Mac, for example:
 ```azurecli
 cd environments
-cp enviornment.ts.example environment.ts  
+cp environment.ts.example environment.ts  
 cp environment.prod.ts.example environment.prod.ts 
 ```
 
