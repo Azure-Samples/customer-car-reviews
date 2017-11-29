@@ -84,13 +84,13 @@ In `src/spa/src/environments` you will find two example settings files, `environ
 In case of Mac, for example:
 ```azurecli
 cd environments
-cp enviornment.ts.example environment.ts  
+cp environment.ts.example environment.ts  
 cp environment.prod.ts.example environment.prod.ts 
 ```
 
-On Windows, you can use explorer to copy these file and change name into `environment.ts` and `environemnt.prod.ts`. 
+On Windows, you can use explorer to copy these file and change name into `environment.ts` and `environment.prod.ts`. 
 
-For deploying to your Azue subscription edit the values in `environemnt.prod.ts` with the right URLs for the three functions and the storage account from the deployment. That is, you will need to update the values for the following:
+For deploying to your Azure subscription edit the values in `environment.prod.ts` with the right URLs for the three functions and the storage account from the deployment. That is, you will need to update the values for the following:
 - fileUploadUrl
 - getCarsUrl
 - createCarUrl
