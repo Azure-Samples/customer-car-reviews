@@ -110,7 +110,7 @@ Now let's use the Angular CLI to build the project ([install Angular](https://gi
 ng b -prod --base-href /
 ```
 
-## Create Containers and Upload SPA Website Files
+## Configure Storage and Upload SPA Website Files
 The next step is to configure the storage account, then upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and expose it via the Proxy function that was created by the ARM template. 
 
 Create a `web` and a `out` container in the blob storage account, with both containers having Container public access level. To create them via the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
@@ -118,6 +118,13 @@ Create a `web` and a `out` container in the blob storage account, with both cont
 az storage container create -n web --account-name YOUR-STORAGE-ACCOUNT-NAME --public-access container
 
 az storage container create -n out --account-name YOUR-STORAGE-ACCOUNT-NAME --public-access container
+```
+
+While we are at it, let's create the storage queues that our functions use to talk to each other, called changefeed, checkimage, and eventsend. To create them via the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
+```azurecli
+az storage queue create --account-name YOUR-STORAGE-ACCOUNT-NAME --name changefeed 
+az storage queue create --account-name YOUR-STORAGE-ACCOUNT-NAME --name checkimage 
+az storage queue create --account-name YOUR-STORAGE-ACCOUNT-NAME --name eventsend
 ```
 
 Now we will to upload the site files to the storage containers.
