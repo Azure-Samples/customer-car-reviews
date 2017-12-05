@@ -38,7 +38,11 @@ export class DashboardComponent implements OnInit{
         localStorage.setItem('approvedCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
-      error => console.log(error)
+      error => {
+        this.approvedCars = [];
+        localStorage.setItem('approvedCars', "[]");
+        console.log(error);
+      }
     );
     url = environment.getCarsUrl.replace(/\{state\}/, 'rejected')
     this.http.get(url)
@@ -48,7 +52,11 @@ export class DashboardComponent implements OnInit{
         localStorage.setItem('rejectedCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
-      error => console.log(error)
+      error => {
+        this.rejectedCars = [];
+        localStorage.setItem('rejectedCars', "[]");
+        console.log(error);
+      }
     );
     url = environment.getCarsUrl.replace(/\{state\}/, 'pending')
     this.http.get(url)
@@ -58,7 +66,11 @@ export class DashboardComponent implements OnInit{
         localStorage.setItem('pendingCars', JSON.stringify(data.json()));
         console.log(data.json());
       },
-      error => console.log(error)
+      error => {
+        this.pendingCars = [];
+        localStorage.setItem('pendingCars', "[]");
+        console.log(error);
+      }
     );
   }
 
