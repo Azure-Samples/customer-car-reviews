@@ -20,7 +20,8 @@ module.exports = function (context, carReviewTextChecked) {
                 'Content-Type': 'application/json'
             },
             body :{ "url" : carReviewTextChecked.image_url },
-            json: true
+            json: true,
+            fullResponse: false 
         };
 
         request(options)
