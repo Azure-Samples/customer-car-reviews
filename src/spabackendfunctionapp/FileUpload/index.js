@@ -1,5 +1,3 @@
-var querystring = require('querystring');
-
 function decodeBase64Image(context, data) {
     var matches = data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
     var response = {}
