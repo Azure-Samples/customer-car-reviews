@@ -1,4 +1,4 @@
-var request = require('request-promise');
+var request = require('requestretry');
 var uuidv4 = require('uuid/v4');
 var moment = require('moment');
 
@@ -23,7 +23,8 @@ if (rejectedReview && rejectedReview.id && rejectedReview.company && rejectedRev
             'Content-Type': 'application/json'
         },
         body : eventGridEvents,
-        json: true
+        json: true,
+        fullResponse: false 
     };
 
     request(options)

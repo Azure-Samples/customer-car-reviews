@@ -1,4 +1,4 @@
-var request = require('request-promise');
+var request = require('requestretry');
 
 module.exports = function (context, carReview) {
 if (carReview && carReview.description && (!carReview.textApproval ||  carReview.textApproval  != "complete")) {
@@ -13,7 +13,8 @@ if (carReview && carReview.description && (!carReview.textApproval ||  carReview
             'Content-Type': 'text/plain'
         },
         body : carReview.description,
-        json: true
+        json: true,
+        fullResponse: false 
     };
     request(options)
     .then(function (parsedBody) {
