@@ -1,8 +1,20 @@
 ---
-services: functions, app-service, event-grid, logic-apps, cosmos-db, cognitive-services
-platforms: nodejs
-author: nzthiago
+page_type: sample
+languages:
+  - javascript
+  - typescript
+  - nodejs
+products:
+  - azure
+  - azure-functions
+  - azure-app-service
+  - azure-event-grid
+  - azure-logic-apps
+  - azure-cosmos-db
+  - azure-cognitive-services
+description: "This is a sample application which acts as a Car Review web site."
 ---
+
 # Customer Car Reviews
 
 This is a sample application which acts as a Car Review web site. Pictures and text is submitted and then inspected for content to ensure a car has been uploaded. Cars are marked approved while non-cars are marked rejected. Rejected cars get sent to a human reviewer via email for further analysis.
