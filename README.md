@@ -12,7 +12,7 @@ products:
   - azure-logic-apps
   - azure-cosmos-db
   - azure-cognitive-services
-description: "This is a sample application which acts as a Car Review web site."
+description: "This is a sample application which acts as a car review web site."
 ---
 
 # Customer Car Reviews
