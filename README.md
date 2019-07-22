@@ -21,7 +21,8 @@ This is a sample application which acts as a Car Review web site. Pictures and t
 
 This sample showcases the Azure Serverless services, and takes advantage of Azure Functions, Azure Functions Proxy, Event Grid, Logic Apps, Cognitive Services, Storage Queues and Blobs, and Cosmos DB.
 
-# Deploying to your Azure Subscription
+## Deploying to your Azure Subscription
+
 An ARM template is in this repo that creates all the Azure services for the solution. Here is what it creates:
 
 | Azure Service | What is it used for |
@@ -36,14 +37,17 @@ An ARM template is in this repo that creates all the Azure services for the solu
 |Cosmos DB|Cosmos DB with the DocumentDB API to store the JSON documents containing information about a car review|
 
 ## Unique word as the base of your project
+
 The first step is for you to **think of a short but unique word** - this will be the base of the names of all the services that will be created on your version of this sample. Use parts of your name, or random characters, as long as it's short and doesn't have any special characters.
 
 Have you thought of that short unique word? Great, now let's continue.
 
 ## Edit ARM Template Parameters and Deploy
+
 Next, deploy the ARM template in the `/src/deployment` folder via your favorite method, making sure to update the `parameters.json` file or override the parameters values for `unique_name` and `notification_emails` at deployment time (unique name is the unique word from earlier!). At the time of writing, Event Grid is only supported in `West Central US` or `West US 2`, so choose one of these regions as the location.  
 
 For example, using the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) you can run the following commands from the `src/deployment` folder (replace the placeholder values for subscription, group, unique word, and email):
+
 ```azurecli
 az login
 
@@ -123,6 +127,7 @@ ng b -prod --base-href /
 ```
 
 ## Configure Storage and Upload SPA Website Files
+
 The next step is to configure the storage account, then upload the content of the compiled reviews website to it. The website is an Angular Single Page Application. We will host it on blob storage and expose it via the Proxy function that was created by the ARM template. 
 
 Create a `web` and a `out` container in the blob storage account, with both containers having Container public access level. To create them via the Azure CLI, in terminal/command line follow these instructions, replacing the value for your storage account name:
@@ -190,22 +195,22 @@ You can use the `Upload` tool in Data Explorer from the Cosmos DB panel in the A
 Now that you have the sample configured end to end, you can browse to it by going to the URL of the proxy function. When you browse to it, it should look like the following:
 ![Sample site](/img/site.png)
 
-# Session Slides
+## Session Slides
 
 This demo was created for the Microsoft Keynote at Serverlessconf Tokyo in November 2017. You can [download the slides here](/ServerlessConfTokyo2017MicrosoftKeynote).
 
-# Challenges for you!
+## Challenges for you!
 
 Here are some other ways the solution could have been architected. Are you up to the challenge?
 
-## Challenge 1: More Logic Apps 
+### Challenge 1: More Logic Apps 
 The Logic App could be used to be the workflow for the entire review service - that is, the Logic App gets called by the Change Feed Function for each new car review, then calls the text and image review functions (or calls Cognitive Services directly), and then goes into the human approval workflow for rejected reviews.
 
-## Challenge 2: More Event Grid
+### Challenge 2: More Event Grid
 The communication between functions could have been done using Event Grid instead of Azure Queues; we used queues to show how it is currently done and how storage queues (or Service Bus queues for extra enterprise level messaging) can be used for communication between services. But Event Grid can be used in this solution for all the messaging; this would make the functions trigger each other via push (i.e., no polling!. Can you update the sample and replace all the Azure Storage Queues with Event Grid instead?
 
-## Challenge 3: Durable Functions
+### Challenge 3: Durable Functions
 [Durable Functions](https://docs.microsoft.com/en-us/azure/azure-functions/durable-functions-overview) is a feature currently in preview that lets you define stateful workflows between functions. It only supports C# at the moment. Are you up to the challenge to rewrite the Functions in the reviews service to C# and creating a durable function to coordinate them all via the Function Chaining or the Fan-out/fan-in patterns?
 
-## Challenge 4: Telemetry
+### Challenge 4: Telemetry
 Azure App Insights and Azure Log Analytics can be used to [monitor Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring) and to monitor [Azure Logic Apps](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-monitor-your-logic-apps-oms). Investigate how you can enable it for the functions and logic apps to gather telemetry about your solution. Create custom entries for your telemetry too!
